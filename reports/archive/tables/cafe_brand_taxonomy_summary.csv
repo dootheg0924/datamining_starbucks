@@ -1,0 +1,5 @@
+﻿feature,brand_group,brand_rows_in_master,mean_all,median_all,mean_starbucks,median_starbucks
+independent_cafe_count_500m,프랜차이즈외,18689,67.520108,53.0,75.142438,64.0
+low_price_cafe_count_500m,"메가MGC커피, 빽다방",1213,3.625017,3.0,4.193833,4.0
+other_franchise_cafe_count_500m,"이디야커피, 투썸플레이스, 기타프랜차이즈",1722,5.815288,5.0,7.207048,6.0
+스타벅스 처리,스타벅스,681,,,,

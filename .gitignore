@@ -1,0 +1,39 @@
+# Python environments and caches
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Jupyter local state
+.ipynb_checkpoints/
+archive/notebooks/
+
+# Raw and intermediate data excluded from GitHub
+rawdata/
+data/raw/
+data/archive/
+
+# Common raw files if they are accidentally placed at project root
+seoul_cafe_master.csv
+subway_avg_passengers.csv
+subway_peak_ratios.csv
+subway_time_group_analysis.csv
+서울_스타벅스*.csv
+서울시_*.csv
+
+# Local OS/editor files
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*.swo
+
+# Logs and temporary files
+*.log
+*.tmp
+*.bak

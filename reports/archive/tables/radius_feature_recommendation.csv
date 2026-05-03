@@ -1,0 +1,16 @@
+﻿feature,recommendation,reason
+dist_nearest_bus_stop,candidate,가장 가까운 버스정류장까지 거리라 해석은 명확하지만 num_bus_stops_300m와 함께 쓰면 버스 접근성 축이 과대표현될 수 있음
+num_bus_stops_100m,drop_too_sparse,스타벅스 기준 0값 비율이 높아 근접 정류장 유무에 치우침
+num_bus_stops_300m,select,0값이 거의 없고 매장 주변 도보권 접근성을 잘 나타내며 500m보다 국지성이 좋음
+num_bus_stops_500m,drop_too_broad,0값이 없고 300m와 상관이 높아 더 넓은 생활권 성격이 강함
+cafe_count_300m,select,직접 경쟁권으로 해석하기 쉽고 500m/1000m보다 매장 인접 상권 차이를 더 잘 보존
+cafe_count_500m,drop_duplicate,기존 num_competing_cafes_500m와 거의 동일하며 cafe_count_300m와도 높은 상관
+cafe_count_1000m,drop_too_broad,개별 매장 입지보다 지역 상권 규모를 강하게 반영하고 반경별 카페 수와 중복성이 큼
+dist_nearest_starbucks,select,스타벅스 내부에서 도심 밀집형과 독립 입지형을 구분하는 해석력이 있음
+dist_nearest_subway,candidate,지하철 접근성 축으로 기존 후보 유지. 버스 접근성 변수와는 다른 교통 차원을 제공
+num_subway_500m,use_for_interpretation_only,이산형이고 IQR이 작아 모델 입력보다는 역세권 여부 해석에 적합
+subway_ridership_500m,candidate,역세권 규모를 나타내지만 0값과 왜도가 있어 변환 후 후보로 유지
+num_competing_cafes_500m,drop_duplicate,cafe_count_500m와 거의 중복. 반경 대표로 cafe_count_300m를 쓰면 동시에 넣지 않는 편이 좋음
+num_restaurants_500m,candidate,카페 수와 다르면서 상권 활성을 나타내는 기존 상권 후보. 카페 밀도와 상관 확인 후 선택
+num_retail_500m,use_for_interpretation_only,상권 규모 변수들과 중복 가능성이 커서 모델 입력보다 유형 설명에 유용
+num_convenience_500m,use_for_interpretation_only,상권 밀도 보조 지표로 해석용 가치가 있으나 음식점/카페 변수와 중복 가능성이 큼

@@ -1,0 +1,21 @@
+﻿feature,rank_type,rank,상호명,시군구명,도로명주소,value_km
+dist_nearest_starbucks,top,1,종로평창동,종로구,서울특별시 종로구 평창12길 3 (평창동),2.638043
+dist_nearest_starbucks,top,2,청계산입구역,서초구,서울특별시 서초구 청계산로 203 (신원동),2.031476
+dist_nearest_starbucks,top,3,홍제역,서대문구,서울특별시 서대문구 통일로 451 (홍제동),1.795753
+dist_nearest_starbucks,top,4,강동강일,강동구,서울특별시 강동구 아리수로93나길 54 (강일동),1.641649
+dist_nearest_starbucks,top,5,송파위례,송파구,"서울특별시 송파구 위례광장로 230 (장지동, 위례2차아이파크)",1.532469
+dist_nearest_starbucks,top,6,서울안토,강북구,서울특별시 강북구 삼양로 689 (우이동) 지하1층,1.499194
+dist_nearest_starbucks,top,7,덕성여대,도봉구,서울특별시 도봉구 삼양로 536 (쌍문동),1.499194
+dist_nearest_starbucks,top,8,이케아강동,강동구,서울특별시 강동구 고덕비즈밸리로 51 (고덕동),1.349175
+dist_nearest_starbucks,top,9,신림녹두거리,관악구,"서울특별시 관악구 신림로 99 (신림동, 센터스퀘어 서울대점)",1.33492
+dist_nearest_starbucks,top,10,망원한강공원,마포구,서울특별시 마포구 마포나루길 435 (망원동),1.312935
+dist_nearest_starbucks,bottom,1,타임스퀘어2F,영등포구,서울특별시 영등포구 영중로 15 지상2층 (영등포동4가),0.009603
+dist_nearest_starbucks,bottom,2,타임스퀘어B2,영등포구,"서울특별시 영등포구 영중로 15, 지하2층 (영등포동4가)",0.009603
+dist_nearest_starbucks,bottom,3,여의도IFC몰(L2)STREET,영등포구,서울특별시 영등포구 국제금융로 10 (여의도동) L2 S15,0.028832
+dist_nearest_starbucks,bottom,4,여의도,영등포구,서울특별시 영등포구 국제금융로2길 28 (여의도동),0.028832
+dist_nearest_starbucks,bottom,5,잠실대교남단R,송파구,서울특별시 송파구 송파대로 570 타워 730 1층,0.033167
+dist_nearest_starbucks,bottom,6,잠실역,송파구,"서울특별시 송파구 송파대로 562 (신천동, 웰리스타워,삼성웰리스아파트) 1층,2층",0.033167
+dist_nearest_starbucks,bottom,7,리저브광화문,종로구,서울특별시 종로구 세종대로 178 (세종로),0.039776
+dist_nearest_starbucks,bottom,8,KT광화문웨스트B1F,종로구,서울특별시 종로구 세종대로 178 (세종로),0.039776
+dist_nearest_starbucks,bottom,9,자양이마트,광진구,서울특별시 광진구 아차산로 272 (자양동) 지하1층,0.043211
+dist_nearest_starbucks,bottom,10,건대스타시티,광진구,서울특별시 광진구 아차산로 262 (자양동),0.043211

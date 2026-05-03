@@ -1,0 +1,28 @@
+﻿feature,status
+dist_nearest_subway,기존 master 변수 그대로 사용
+num_subway_500m,기존 master 변수 그대로 사용
+nearest_subway_ridership,기존 master 변수 그대로 사용
+num_restaurants_500m,기존 master 변수 그대로 사용
+num_retail_500m,기존 master 변수 그대로 사용
+num_convenience_500m,기존 master 변수 그대로 사용
+avg_income,기존 master 변수 그대로 사용
+num_offices,기존 master 변수 그대로 사용
+living_population,기존 master 변수 그대로 사용
+land_price,기존 master 변수 그대로 사용
+num_bus_stops_300m,이전 단계에서 생성되어 가져옴
+dist_nearest_starbucks,이전 단계에서 생성되어 가져옴
+subway_morning_peak_500m,이번 v2에서 새로 생성
+subway_lunch_peak_500m,이번 v2에서 새로 생성
+subway_evening_peak_500m,이번 v2에서 새로 생성
+independent_cafe_count_500m,이번 v2에서 새로 생성
+low_price_cafe_count_500m,이번 v2에서 새로 생성
+other_franchise_cafe_count_500m,이번 v2에서 새로 생성
+subway_ridership_500m,최종 output에서 제외
+num_competing_cafes_500m,최종 output에서 제외
+dist_nearest_bus_stop,최종 output에서 제외
+num_bus_stops_100m,최종 output에서 제외
+num_bus_stops_500m,최종 output에서 제외
+cafe_count_300m,최종 output에서 제외
+cafe_count_500m,최종 output에서 제외
+cafe_count_1000m,최종 output에서 제외
+premium_cafe_count_500m,최종 output에서 제외
