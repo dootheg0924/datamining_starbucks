@@ -9,17 +9,25 @@ import pandas as pd
 import seaborn as sns
 from scipy.spatial import cKDTree
 
+from _utils import (
+    GENERATED_FIGURE_DIR,
+    GENERATED_REPORT_DIR,
+    GENERATED_TABLE_DIR,
+    INTERMEDIATE_DATA_DIR,
+    RAWDATA_DIR,
+    ensure_dirs,
+    markdown_table,
+    read_csv_with_fallback,
+    relative_posix,
+)
 
-ROOT = Path(__file__).resolve().parents[1]
-DATA_DIR = ROOT / "data"
-REPORT_DIR = ROOT / "reports"
-TABLE_DIR = REPORT_DIR / "tables"
-FIGURE_DIR = REPORT_DIR / "figures" / "geo_features"
+TABLE_DIR = GENERATED_TABLE_DIR
+FIGURE_DIR = GENERATED_FIGURE_DIR / "geo_features"
 
-MASTER_PATH = ROOT / "seoul_cafe_master.csv"
-BUS_PATH = ROOT / "서울시_버스정류소_위치정보.csv"
-OUTPUT_MASTER_PATH = DATA_DIR / "seoul_cafe_master_with_geo_features.csv"
-REPORT_PATH = REPORT_DIR / "04_geo_feature_engineering.md"
+MASTER_PATH = RAWDATA_DIR / "seoul_cafe_master.csv"
+BUS_PATH = RAWDATA_DIR / "서울시_버스정류소_위치정보.csv"
+OUTPUT_MASTER_PATH = INTERMEDIATE_DATA_DIR / "seoul_cafe_master_with_geo_features.csv"
+REPORT_PATH = GENERATED_REPORT_DIR / "04_geo_feature_engineering.md"
 
 EARTH_RADIUS_KM = 6371.0088
 NEW_FEATURES = [
@@ -43,15 +51,6 @@ CAFE_COUNT_FEATURES = [
     "cafe_count_1000m",
 ]
 ID_COLUMNS = ["상호명", "브랜드", "is_starbucks", "시군구명", "도로명주소"]
-
-
-def read_csv_with_fallback(path: Path) -> tuple[pd.DataFrame, str]:
-    for encoding in ["utf-8-sig", "euc-kr", "cp949", "utf-8"]:
-        try:
-            return pd.read_csv(path, encoding=encoding), encoding
-        except UnicodeDecodeError:
-            continue
-    return pd.read_csv(path), "default"
 
 
 def setup_plot_style() -> None:
@@ -116,29 +115,6 @@ def feature_summary(df: pd.DataFrame, features: list[str]) -> pd.DataFrame:
     return pd.DataFrame(rows).round(6)
 
 
-def markdown_table(df: pd.DataFrame, max_rows: int | None = None) -> str:
-    if max_rows is not None:
-        df = df.head(max_rows)
-    if df.empty:
-        return "_No rows._"
-
-    table = df.copy()
-    table = table.astype(object).where(pd.notna(table), "")
-    headers = [str(col) for col in table.columns]
-    rows = [[str(value) for value in row] for row in table.to_numpy()]
-    widths = [
-        max(len(headers[i]), *(len(row[i]) for row in rows))
-        for i in range(len(headers))
-    ]
-    header_line = "| " + " | ".join(headers[i].ljust(widths[i]) for i in range(len(headers))) + " |"
-    separator_line = "| " + " | ".join("-" * widths[i] for i in range(len(headers))) + " |"
-    body_lines = [
-        "| " + " | ".join(row[i].ljust(widths[i]) for i in range(len(headers))) + " |"
-        for row in rows
-    ]
-    return "\n".join([header_line, separator_line, *body_lines])
-
-
 def save_histograms(df: pd.DataFrame) -> list[dict[str, str]]:
     rows = []
     for feature in [*BUS_COUNT_FEATURES, *CAFE_COUNT_FEATURES, "dist_nearest_starbucks"]:
@@ -151,7 +127,7 @@ def save_histograms(df: pd.DataFrame) -> list[dict[str, str]]:
         path = FIGURE_DIR / f"{feature}_hist.png"
         fig.savefig(path, dpi=160)
         plt.close(fig)
-        rows.append({"feature": feature, "figure": str(path.relative_to(ROOT)).replace("\\", "/")})
+        rows.append({"feature": feature, "figure": relative_posix(path)})
     return rows
 
 
@@ -178,10 +154,7 @@ def save_correlation_heatmap(corr: pd.DataFrame) -> Path:
 
 
 def main() -> None:
-    DATA_DIR.mkdir(exist_ok=True)
-    REPORT_DIR.mkdir(exist_ok=True)
-    TABLE_DIR.mkdir(parents=True, exist_ok=True)
-    FIGURE_DIR.mkdir(parents=True, exist_ok=True)
+    ensure_dirs(INTERMEDIATE_DATA_DIR, GENERATED_REPORT_DIR, TABLE_DIR, FIGURE_DIR)
     setup_plot_style()
 
     df, master_encoding = read_csv_with_fallback(MASTER_PATH)
@@ -334,7 +307,7 @@ def main() -> None:
         f"- 생성 시각: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
         f"- 입력 master: `{MASTER_PATH.name}` ({master_encoding})",
         f"- 입력 버스정류장: `{BUS_PATH.name}` ({bus_encoding})",
-        f"- 출력 master: `data/seoul_cafe_master_with_geo_features.csv`",
+        f"- 출력 master: `data/archive/intermediate/seoul_cafe_master_with_geo_features.csv`",
         "- 처리 범위: `seoul_cafe_master.csv` 전체 행에 좌표 기반 변수 추가",
         "- 거리 계산: Haversine great-circle distance. 거리 단위는 km",
         "- 반경 기준: 100m=0.1km, 300m=0.3km, 500m=0.5km, 1000m=1.0km",
@@ -396,8 +369,8 @@ def main() -> None:
         "",
         "## 7. 새 변수 상관관계",
         "",
-        f"- 전체 correlation table: `reports/tables/new_geo_feature_correlations.csv`",
-        f"- heatmap: `{str(heatmap_path.relative_to(ROOT)).replace(chr(92), '/')}`",
+        f"- 전체 correlation table: `reports/generated/tables/new_geo_feature_correlations.csv`",
+        f"- heatmap: `{relative_posix(heatmap_path)}`",
         "",
         "아래는 버스정류장 count 변수와 카페 count 변수만 발췌한 Pearson correlation이다.",
         "",
@@ -409,13 +382,13 @@ def main() -> None:
         "",
         "## 9. 저장 산출물",
         "",
-        "- `data/seoul_cafe_master_with_geo_features.csv`",
-        "- `reports/04_geo_feature_engineering.md`",
-        "- `reports/tables/new_geo_feature_summary_all.csv`",
-        "- `reports/tables/new_geo_feature_summary_starbucks.csv`",
-        "- `reports/tables/new_geo_feature_correlations.csv`",
-        "- `reports/tables/starbucks_new_geo_top_bottom.csv`",
-        "- `reports/figures/geo_features/`",
+        "- `data/archive/intermediate/seoul_cafe_master_with_geo_features.csv`",
+        "- `reports/generated/04_geo_feature_engineering.md`",
+        "- `reports/generated/tables/new_geo_feature_summary_all.csv`",
+        "- `reports/generated/tables/new_geo_feature_summary_starbucks.csv`",
+        "- `reports/generated/tables/new_geo_feature_correlations.csv`",
+        "- `reports/generated/tables/starbucks_new_geo_top_bottom.csv`",
+        "- `reports/generated/figures/geo_features/`",
     ]
 
     REPORT_PATH.write_text("\n".join(lines) + "\n", encoding="utf-8-sig")

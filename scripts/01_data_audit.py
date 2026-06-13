@@ -1,49 +1,21 @@
 from __future__ import annotations
 
 from datetime import datetime
-from pathlib import Path
 
 import pandas as pd
 
+from _utils import (
+    GENERATED_REPORT_DIR,
+    GENERATED_TABLE_DIR,
+    RAWDATA_DIR,
+    ensure_dirs,
+    markdown_table,
+    read_csv,
+)
 
-ROOT = Path(__file__).resolve().parents[1]
-DATA_PATH = ROOT / "seoul_cafe_master.csv"
-REPORT_DIR = ROOT / "reports"
-TABLE_DIR = REPORT_DIR / "tables"
-REPORT_PATH = REPORT_DIR / "01_data_audit.md"
-
-
-def read_master_csv(path: Path) -> pd.DataFrame:
-    """Load the master CSV without mutating or imputing any values."""
-    try:
-        return pd.read_csv(path, encoding="utf-8-sig")
-    except UnicodeDecodeError:
-        return pd.read_csv(path, encoding="cp949")
-
-
-def markdown_table(df: pd.DataFrame) -> str:
-    if df.empty:
-        return "_No rows._"
-
-    table = df.copy()
-    table = table.astype(object).where(pd.notna(table), "")
-    headers = [str(col) for col in table.columns]
-    rows = [[str(value) for value in row] for row in table.to_numpy()]
-
-    widths = [
-        max(len(headers[i]), *(len(row[i]) for row in rows))
-        for i in range(len(headers))
-    ]
-
-    header_line = "| " + " | ".join(
-        headers[i].ljust(widths[i]) for i in range(len(headers))
-    ) + " |"
-    separator_line = "| " + " | ".join("-" * widths[i] for i in range(len(headers))) + " |"
-    body_lines = [
-        "| " + " | ".join(row[i].ljust(widths[i]) for i in range(len(headers))) + " |"
-        for row in rows
-    ]
-    return "\n".join([header_line, separator_line, *body_lines])
+DATA_PATH = RAWDATA_DIR / "seoul_cafe_master.csv"
+TABLE_DIR = GENERATED_TABLE_DIR
+REPORT_PATH = GENERATED_REPORT_DIR / "01_data_audit.md"
 
 
 def missing_table(df: pd.DataFrame) -> pd.DataFrame:
@@ -134,10 +106,9 @@ def infer_distance_unit(df: pd.DataFrame) -> tuple[pd.DataFrame, str]:
 
 
 def main() -> None:
-    REPORT_DIR.mkdir(exist_ok=True)
-    TABLE_DIR.mkdir(parents=True, exist_ok=True)
+    ensure_dirs(GENERATED_REPORT_DIR, TABLE_DIR)
 
-    df = read_master_csv(DATA_PATH)
+    df = read_csv(DATA_PATH)
     df_starbucks = df[df["is_starbucks"] == 1].copy()
 
     columns_dtypes = pd.DataFrame(
@@ -209,10 +180,10 @@ def main() -> None:
         "",
         "## 10. 저장된 표",
         "",
-        "- `reports/tables/missing_values.csv`",
-        "- `reports/tables/missing_values_starbucks.csv`",
-        "- `reports/tables/basic_stats_all.csv`",
-        "- `reports/tables/basic_stats_starbucks.csv`",
+        "- `reports/generated/tables/missing_values.csv`",
+        "- `reports/generated/tables/missing_values_starbucks.csv`",
+        "- `reports/generated/tables/basic_stats_all.csv`",
+        "- `reports/generated/tables/basic_stats_starbucks.csv`",
     ]
 
     REPORT_PATH.write_text("\n".join(lines) + "\n", encoding="utf-8-sig")
