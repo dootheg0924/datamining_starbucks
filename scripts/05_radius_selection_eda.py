@@ -1,19 +1,25 @@
 from __future__ import annotations
 
 from datetime import datetime
-from pathlib import Path
 
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 
+from _utils import (
+    GENERATED_FIGURE_DIR,
+    GENERATED_REPORT_DIR,
+    GENERATED_TABLE_DIR,
+    INTERMEDIATE_DATA_DIR,
+    ensure_dirs,
+    markdown_table,
+    relative_posix,
+)
 
-ROOT = Path(__file__).resolve().parents[1]
-INPUT_PATH = ROOT / "data" / "seoul_cafe_master_with_geo_features.csv"
-REPORT_DIR = ROOT / "reports"
-TABLE_DIR = REPORT_DIR / "tables"
-FIGURE_DIR = REPORT_DIR / "figures" / "radius_selection"
-REPORT_PATH = REPORT_DIR / "05_radius_selection_eda.md"
+INPUT_PATH = INTERMEDIATE_DATA_DIR / "seoul_cafe_master_with_geo_features.csv"
+TABLE_DIR = GENERATED_TABLE_DIR
+FIGURE_DIR = GENERATED_FIGURE_DIR / "radius_selection"
+REPORT_PATH = GENERATED_REPORT_DIR / "05_radius_selection_eda.md"
 
 NEW_FEATURES = [
     "dist_nearest_bus_stop",
@@ -44,29 +50,6 @@ def setup_plot_style() -> None:
     plt.rcParams["font.family"] = "Malgun Gothic"
     plt.rcParams["axes.unicode_minus"] = False
     sns.set_theme(style="whitegrid", font="Malgun Gothic")
-
-
-def markdown_table(df: pd.DataFrame, max_rows: int | None = None) -> str:
-    if max_rows is not None:
-        df = df.head(max_rows)
-    if df.empty:
-        return "_No rows._"
-
-    table = df.copy()
-    table = table.astype(object).where(pd.notna(table), "")
-    headers = [str(col) for col in table.columns]
-    rows = [[str(value) for value in row] for row in table.to_numpy()]
-    widths = [
-        max(len(headers[i]), *(len(row[i]) for row in rows))
-        for i in range(len(headers))
-    ]
-    header_line = "| " + " | ".join(headers[i].ljust(widths[i]) for i in range(len(headers))) + " |"
-    separator_line = "| " + " | ".join("-" * widths[i] for i in range(len(headers))) + " |"
-    body_lines = [
-        "| " + " | ".join(row[i].ljust(widths[i]) for i in range(len(headers))) + " |"
-        for row in rows
-    ]
-    return "\n".join([header_line, separator_line, *body_lines])
 
 
 def feature_summary(df: pd.DataFrame, features: list[str]) -> pd.DataFrame:
@@ -231,7 +214,7 @@ def save_histograms(df: pd.DataFrame) -> list[dict[str, str]]:
         path = FIGURE_DIR / f"{feature}_hist.png"
         fig.savefig(path, dpi=160)
         plt.close(fig)
-        figure_rows.append({"feature": feature, "figure": str(path.relative_to(ROOT)).replace("\\", "/")})
+        figure_rows.append({"feature": feature, "figure": relative_posix(path)})
     return figure_rows
 
 
@@ -258,9 +241,7 @@ def save_heatmap(corr: pd.DataFrame) -> Path:
 
 
 def main() -> None:
-    REPORT_DIR.mkdir(exist_ok=True)
-    TABLE_DIR.mkdir(parents=True, exist_ok=True)
-    FIGURE_DIR.mkdir(parents=True, exist_ok=True)
+    ensure_dirs(GENERATED_REPORT_DIR, TABLE_DIR, FIGURE_DIR)
     setup_plot_style()
 
     df = pd.read_csv(INPUT_PATH, encoding="utf-8-sig")
@@ -402,7 +383,7 @@ def main() -> None:
         "# 05 Radius Selection EDA",
         "",
         f"- 생성 시각: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
-        f"- 입력 파일: `{str(INPUT_PATH.relative_to(ROOT)).replace(chr(92), '/')}`",
+        f"- 입력 파일: `{relative_posix(INPUT_PATH)}`",
         "- 분석 대상: `df[df[\"is_starbucks\"] == 1]`",
         f"- 스타벅스 매장 수: {len(df_starbucks):,}",
         "- 목적: clustering 실행 전 좌표 기반 반경 변수와 중복 변수를 선택",
@@ -462,8 +443,8 @@ def main() -> None:
         "",
         "## 6. 새 변수와 기존 변수 상관관계",
         "",
-        f"- correlation table: `reports/tables/radius_feature_correlations.csv`",
-        f"- heatmap: `{str(heatmap_path.relative_to(ROOT)).replace(chr(92), '/')}`",
+        f"- correlation table: `reports/generated/tables/radius_feature_correlations.csv`",
+        f"- heatmap: `{relative_posix(heatmap_path)}`",
         "",
         markdown_table(selected_corr_checks),
         "",
@@ -486,11 +467,11 @@ def main() -> None:
         "## 11. 저장 산출물",
         "",
         "- `reports/05_radius_selection_eda.md`",
-        "- `reports/tables/radius_feature_summary_starbucks.csv`",
-        "- `reports/tables/radius_feature_correlations.csv`",
-        "- `reports/tables/radius_feature_recommendation.csv`",
-        "- `reports/tables/radius_feature_top_bottom_starbucks.csv`",
-        "- `reports/figures/radius_selection/`",
+        "- `reports/generated/tables/radius_feature_summary_starbucks.csv`",
+        "- `reports/generated/tables/radius_feature_correlations.csv`",
+        "- `reports/generated/tables/radius_feature_recommendation.csv`",
+        "- `reports/generated/tables/radius_feature_top_bottom_starbucks.csv`",
+        "- `reports/generated/figures/radius_selection/`",
     ]
 
     REPORT_PATH.write_text("\n".join(lines) + "\n", encoding="utf-8-sig")

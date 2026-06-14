@@ -3,19 +3,26 @@ from __future__ import annotations
 import math
 import re
 from datetime import datetime
-from pathlib import Path
 
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 
+from _utils import (
+    GENERATED_FIGURE_DIR,
+    GENERATED_REPORT_DIR,
+    GENERATED_TABLE_DIR,
+    RAWDATA_DIR,
+    ensure_dirs,
+    markdown_table,
+    read_csv,
+    relative_posix,
+)
 
-ROOT = Path(__file__).resolve().parents[1]
-DATA_PATH = ROOT / "seoul_cafe_master.csv"
-REPORT_DIR = ROOT / "reports"
-TABLE_DIR = REPORT_DIR / "tables"
-FIGURE_DIR = REPORT_DIR / "figures" / "starbucks_only"
-REPORT_PATH = REPORT_DIR / "02_starbucks_only_eda.md"
+DATA_PATH = RAWDATA_DIR / "seoul_cafe_master.csv"
+TABLE_DIR = GENERATED_TABLE_DIR
+FIGURE_DIR = GENERATED_FIGURE_DIR / "starbucks_only"
+REPORT_PATH = GENERATED_REPORT_DIR / "02_starbucks_only_eda.md"
 
 FEATURES = [
     "dist_nearest_subway",
@@ -65,13 +72,6 @@ FEATURE_LABELS_KO = {
 }
 
 
-def read_master_csv(path: Path) -> pd.DataFrame:
-    try:
-        return pd.read_csv(path, encoding="utf-8-sig")
-    except UnicodeDecodeError:
-        return pd.read_csv(path, encoding="cp949")
-
-
 def setup_plot_style() -> None:
     plt.rcParams["font.family"] = "Malgun Gothic"
     plt.rcParams["axes.unicode_minus"] = False
@@ -80,31 +80,6 @@ def setup_plot_style() -> None:
 
 def slugify(value: str) -> str:
     return re.sub(r"[^A-Za-z0-9_]+", "_", value).strip("_")
-
-
-def markdown_table(df: pd.DataFrame, max_rows: int | None = None) -> str:
-    if max_rows is not None:
-        df = df.head(max_rows)
-    if df.empty:
-        return "_No rows._"
-
-    table = df.copy()
-    table = table.astype(object).where(pd.notna(table), "")
-    headers = [str(col) for col in table.columns]
-    rows = [[str(value) for value in row] for row in table.to_numpy()]
-    widths = [
-        max(len(headers[i]), *(len(row[i]) for row in rows))
-        for i in range(len(headers))
-    ]
-    header_line = "| " + " | ".join(
-        headers[i].ljust(widths[i]) for i in range(len(headers))
-    ) + " |"
-    separator_line = "| " + " | ".join("-" * widths[i] for i in range(len(headers))) + " |"
-    body_lines = [
-        "| " + " | ".join(row[i].ljust(widths[i]) for i in range(len(headers))) + " |"
-        for row in rows
-    ]
-    return "\n".join([header_line, separator_line, *body_lines])
 
 
 def feature_summary(df: pd.DataFrame) -> pd.DataFrame:
@@ -340,13 +315,13 @@ def save_distribution_plots(df: pd.DataFrame, summary: pd.DataFrame) -> list[dic
             log_path_obj = FIGURE_DIR / f"{slug}_log1p_hist.png"
             fig.savefig(log_path_obj, dpi=160)
             plt.close(fig)
-            log_path = str(log_path_obj.relative_to(ROOT)).replace("\\", "/")
+            log_path = relative_posix(log_path_obj)
 
         plot_rows.append(
             {
                 "feature": feature,
-                "histogram": str(hist_path.relative_to(ROOT)).replace("\\", "/"),
-                "boxplot": str(box_path.relative_to(ROOT)).replace("\\", "/"),
+                "histogram": relative_posix(hist_path),
+                "boxplot": relative_posix(box_path),
                 "log1p_histogram": log_path,
             }
         )
@@ -394,12 +369,10 @@ def make_recommendations(summary: pd.DataFrame, spearman_corr: pd.DataFrame) -> 
 
 
 def main() -> None:
-    REPORT_DIR.mkdir(exist_ok=True)
-    TABLE_DIR.mkdir(parents=True, exist_ok=True)
-    FIGURE_DIR.mkdir(parents=True, exist_ok=True)
+    ensure_dirs(GENERATED_REPORT_DIR, TABLE_DIR, FIGURE_DIR)
     setup_plot_style()
 
-    df = read_master_csv(DATA_PATH)
+    df = read_csv(DATA_PATH)
     missing_features = [feature for feature in FEATURES if feature not in df.columns]
     missing_id_cols = [col for col in ID_COLUMNS if col not in df.columns]
     if missing_features or missing_id_cols:
@@ -527,24 +500,24 @@ def main() -> None:
         "",
         "## 5. IQR 기준 이상치 요약",
         "",
-        "이상치는 제거하지 않고, 해석 가능한 매장인지 확인하기 위한 점검 대상으로만 기록했다. 전체 매장 리스트는 `reports/tables/starbucks_only_outliers_iqr.csv`에 저장했다.",
+        "이상치는 제거하지 않고, 해석 가능한 매장인지 확인하기 위한 점검 대상으로만 기록했다. 전체 매장 리스트는 `reports/generated/tables/starbucks_only_outliers_iqr.csv`에 저장했다.",
         "`num_subway_500m`는 Q1과 Q3가 모두 1이라 IQR이 0이다. 따라서 IQR 기준에서는 값이 1이 아닌 매장이 모두 이상치로 잡히며, 이 변수는 연속형 변수의 이상치 판단처럼 해석하면 안 된다.",
         "",
         markdown_table(outlier_stats),
         "",
         "## 6. 상위/하위 10개 매장",
         "",
-        "각 변수별 상위 10개와 하위 10개 매장은 `reports/tables/starbucks_only_top_bottom_by_feature.csv`에 저장했다. "
+        "각 변수별 상위 10개와 하위 10개 매장은 `reports/generated/tables/starbucks_only_top_bottom_by_feature.csv`에 저장했다. "
         "보고서에는 일부 예시만 표시한다.",
         "",
         markdown_table(top_bottom.head(24)),
         "",
         "## 7. 변수 간 상관관계",
         "",
-        f"- Pearson correlation table: `reports/tables/starbucks_only_corr_pearson.csv`",
-        f"- Spearman correlation table: `reports/tables/starbucks_only_corr_spearman.csv`",
-        f"- Pearson heatmap: `{str(pearson_heatmap.relative_to(ROOT)).replace(chr(92), '/')}`",
-        f"- Spearman heatmap: `{str(spearman_heatmap.relative_to(ROOT)).replace(chr(92), '/')}`",
+        f"- Pearson correlation table: `reports/generated/tables/starbucks_only_corr_pearson.csv`",
+        f"- Spearman correlation table: `reports/generated/tables/starbucks_only_corr_spearman.csv`",
+        f"- Pearson heatmap: `{relative_posix(pearson_heatmap)}`",
+        f"- Spearman heatmap: `{relative_posix(spearman_heatmap)}`",
         "",
         "Spearman 기준 절댓값 0.7 이상인 변수쌍은 다음과 같다.",
         "",
@@ -579,13 +552,13 @@ def main() -> None:
         "## 11. 저장 산출물",
         "",
         "- `reports/02_starbucks_only_eda.md`",
-        "- `reports/tables/starbucks_only_feature_summary.csv`",
-        "- `reports/tables/starbucks_only_outliers_iqr.csv`",
-        "- `reports/tables/starbucks_only_top_bottom_by_feature.csv`",
-        "- `reports/tables/starbucks_only_corr_pearson.csv`",
-        "- `reports/tables/starbucks_only_corr_spearman.csv`",
-        "- `reports/tables/starbucks_only_feature_recommendation.csv`",
-        "- `reports/figures/starbucks_only/`",
+        "- `reports/generated/tables/starbucks_only_feature_summary.csv`",
+        "- `reports/generated/tables/starbucks_only_outliers_iqr.csv`",
+        "- `reports/generated/tables/starbucks_only_top_bottom_by_feature.csv`",
+        "- `reports/generated/tables/starbucks_only_corr_pearson.csv`",
+        "- `reports/generated/tables/starbucks_only_corr_spearman.csv`",
+        "- `reports/generated/tables/starbucks_only_feature_recommendation.csv`",
+        "- `reports/generated/figures/starbucks_only/`",
     ]
 
     REPORT_PATH.write_text("\n".join(lines) + "\n", encoding="utf-8-sig")

@@ -10,8 +10,8 @@
    - 스타벅스 681개 매장 기준 최종 모델 feature입니다.
 3. `data/seoul_cafe_model_features_v1.csv`
    - 서울 카페 22,305개 기준 최종 모델 feature입니다.
-4. `reports/archive/07_model_feature_finalization_v2.md`
-   - 최종 CSV 생성 기준과 변수 상태를 기록한 원본 보고서입니다.
+4. `reports/archive/analysis_archive_summary.md`
+   - 기존 상세 archive 보고서 7개를 압축한 분석 흐름 요약입니다.
 
 ## Repository Structure
 
@@ -23,9 +23,11 @@ data/
 reports/
   feature_evidence_summary.md
   archive/
-    *.md
+    analysis_archive_summary.md
     figures/
     tables/
+  generated/
+    # ignored regenerated reports, tables, and figures
 
 scripts/
   01_data_audit.py
@@ -38,6 +40,9 @@ scripts/
 
 archive/
   html_maps/
+
+presentation/
+  *.pdf
 ```
 
 ## Data Policy
@@ -48,6 +53,7 @@ Excluded local folders:
 
 - `rawdata/`: source CSV files
 - `data/archive/`: intermediate generated data
+- `reports/generated/`: regenerated detailed reports, tables, and figures
 - `.venv/`: local Python virtual environment
 - `archive/notebooks/`: exploratory notebooks
 

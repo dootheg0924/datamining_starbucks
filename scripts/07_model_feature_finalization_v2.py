@@ -8,17 +8,25 @@ import numpy as np
 import pandas as pd
 from scipy.spatial import cKDTree
 
+from _utils import (
+    DATA_DIR,
+    GENERATED_REPORT_DIR,
+    GENERATED_TABLE_DIR,
+    INTERMEDIATE_DATA_DIR,
+    RAWDATA_DIR,
+    ensure_dirs,
+    markdown_table,
+    read_csv_with_fallback,
+    relative_posix,
+)
 
-ROOT = Path(__file__).resolve().parents[1]
-DATA_DIR = ROOT / "data"
-REPORT_DIR = ROOT / "reports"
-TABLE_DIR = REPORT_DIR / "tables"
+TABLE_DIR = GENERATED_TABLE_DIR
 
-BASE_PATH = DATA_DIR / "seoul_cafe_master_with_geo_features.csv"
-PEAK_PATH = ROOT / "subway_time_group_analysis.csv"
+BASE_PATH = INTERMEDIATE_DATA_DIR / "seoul_cafe_master_with_geo_features.csv"
+PEAK_PATH = RAWDATA_DIR / "subway_time_group_analysis.csv"
 SEOUL_OUTPUT_PATH = DATA_DIR / "seoul_cafe_model_features_v1.csv"
 STARBUCKS_OUTPUT_PATH = DATA_DIR / "starbucks_model_features_v1.csv"
-REPORT_PATH = REPORT_DIR / "07_model_feature_finalization_v2.md"
+REPORT_PATH = GENERATED_REPORT_DIR / "07_model_feature_finalization_v2.md"
 
 EARTH_RADIUS_KM = 6371.0088
 RADIUS_500M_KM = 0.5
@@ -85,17 +93,8 @@ BRAND_TAXONOMY = {
 }
 
 
-def read_csv_with_fallback(path: Path) -> tuple[pd.DataFrame, str]:
-    for encoding in ["utf-8-sig", "euc-kr", "cp949", "utf-8"]:
-        try:
-            return pd.read_csv(path, encoding=encoding), encoding
-        except UnicodeDecodeError:
-            continue
-    return pd.read_csv(path), "default"
-
-
 def find_station_master_path() -> Path:
-    matches = [path for path in ROOT.glob("*.csv") if "역사마스터" in path.name]
+    matches = [path for path in RAWDATA_DIR.glob("*.csv") if "역사마스터" in path.name]
     if not matches:
         raise FileNotFoundError("서울시_역사마스터_정보 파일을 찾지 못했습니다.")
     return matches[0]
@@ -157,29 +156,6 @@ def radius_counts_for_brand(df: pd.DataFrame, brand_values: list[str], cafe_xyz:
     return counts
 
 
-def markdown_table(df: pd.DataFrame, max_rows: int | None = None) -> str:
-    if max_rows is not None:
-        df = df.head(max_rows)
-    if df.empty:
-        return "_No rows._"
-
-    table = df.copy()
-    table = table.astype(object).where(pd.notna(table), "")
-    headers = [str(col) for col in table.columns]
-    rows = [[str(value) for value in row] for row in table.to_numpy()]
-    widths = [
-        max(len(headers[i]), *(len(row[i]) for row in rows))
-        for i in range(len(headers))
-    ]
-    header_line = "| " + " | ".join(headers[i].ljust(widths[i]) for i in range(len(headers))) + " |"
-    separator_line = "| " + " | ".join("-" * widths[i] for i in range(len(headers))) + " |"
-    body_lines = [
-        "| " + " | ".join(row[i].ljust(widths[i]) for i in range(len(headers))) + " |"
-        for row in rows
-    ]
-    return "\n".join([header_line, separator_line, *body_lines])
-
-
 def missing_table(df: pd.DataFrame, features: list[str]) -> pd.DataFrame:
     total = len(df)
     return pd.DataFrame(
@@ -218,9 +194,7 @@ def summary_table(df: pd.DataFrame, features: list[str]) -> pd.DataFrame:
 
 
 def main() -> None:
-    DATA_DIR.mkdir(exist_ok=True)
-    REPORT_DIR.mkdir(exist_ok=True)
-    TABLE_DIR.mkdir(parents=True, exist_ok=True)
+    ensure_dirs(DATA_DIR, GENERATED_REPORT_DIR, TABLE_DIR)
 
     df, base_encoding = read_csv_with_fallback(BASE_PATH)
     peak_df, peak_encoding = read_csv_with_fallback(PEAK_PATH)
@@ -466,7 +440,7 @@ def main() -> None:
         "# 07 Model Feature Finalization v2",
         "",
         f"- 생성 시각: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
-        f"- base file: `{str(BASE_PATH.relative_to(ROOT)).replace(chr(92), '/')}` ({base_encoding})",
+        f"- base file: `{relative_posix(BASE_PATH)}` ({base_encoding})",
         f"- subway peak file: `{PEAK_PATH.name}` ({peak_encoding})",
         f"- station master file: `{station_path.name}` ({station_encoding})",
         "- 처리 원칙: 원본 덮어쓰기 없음, 결측치 대체 없음, 이상치 제거 없음, clustering/classification 실행 없음",
@@ -515,7 +489,7 @@ def main() -> None:
             )
         ),
         "",
-        "- 병합 실패 목록 저장: `reports/tables/subway_peak_station_merge_failures.csv`",
+        "- 병합 실패 목록 저장: `reports/generated/tables/subway_peak_station_merge_failures.csv`",
         "- 병합 key: 호선명/역명에서 공백, 괄호, 일부 호선 suffix를 정규화한 key",
         "- 반경 500m 내 지하철역이 없는 카페는 peak 변수 값을 0으로 두었다.",
         "",
@@ -551,15 +525,15 @@ def main() -> None:
         "",
         "- `data/seoul_cafe_model_features_v1.csv`",
         "- `data/starbucks_model_features_v1.csv`",
-        "- `reports/07_model_feature_finalization_v2.md`",
-        "- `reports/tables/model_feature_v2_columns.csv`",
-        "- `reports/tables/model_feature_v2_status.csv`",
-        "- `reports/tables/model_feature_v2_missing_values_all.csv`",
-        "- `reports/tables/model_feature_v2_missing_values_starbucks.csv`",
-        "- `reports/tables/model_feature_v2_summary_starbucks.csv`",
-        "- `reports/tables/subway_peak_station_merge_failures.csv`",
-        "- `reports/tables/cafe_brand_taxonomy_summary.csv`",
-        "- `reports/tables/new_feature_v2_summary.csv`",
+        "- `reports/generated/07_model_feature_finalization_v2.md`",
+        "- `reports/generated/tables/model_feature_v2_columns.csv`",
+        "- `reports/generated/tables/model_feature_v2_status.csv`",
+        "- `reports/generated/tables/model_feature_v2_missing_values_all.csv`",
+        "- `reports/generated/tables/model_feature_v2_missing_values_starbucks.csv`",
+        "- `reports/generated/tables/model_feature_v2_summary_starbucks.csv`",
+        "- `reports/generated/tables/subway_peak_station_merge_failures.csv`",
+        "- `reports/generated/tables/cafe_brand_taxonomy_summary.csv`",
+        "- `reports/generated/tables/new_feature_v2_summary.csv`",
     ]
 
     REPORT_PATH.write_text("\n".join(lines) + "\n", encoding="utf-8-sig")

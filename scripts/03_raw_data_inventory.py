@@ -5,16 +5,22 @@ from pathlib import Path
 
 import pandas as pd
 
+from _utils import (
+    CSV_ENCODINGS,
+    GENERATED_REPORT_DIR,
+    GENERATED_TABLE_DIR,
+    RAWDATA_DIR,
+    ROOT,
+    ensure_dirs,
+    markdown_table,
+)
 
-ROOT = Path(__file__).resolve().parents[1]
-REPORT_DIR = ROOT / "reports"
-TABLE_DIR = REPORT_DIR / "tables"
-REPORT_PATH = REPORT_DIR / "03_raw_data_inventory.md"
+TABLE_DIR = GENERATED_TABLE_DIR
+REPORT_PATH = GENERATED_REPORT_DIR / "03_raw_data_inventory.md"
 RAW_FILES_PATH = TABLE_DIR / "raw_data_files.csv"
 FEASIBILITY_PATH = TABLE_DIR / "feature_feasibility_matrix.csv"
 
 DATA_EXTENSIONS = {".csv", ".xlsx", ".xls", ".json", ".geojson"}
-CSV_ENCODINGS = ("euc-kr", "cp949", "utf-8-sig", "utf-8")
 
 
 def read_table(path: Path) -> tuple[pd.DataFrame | None, str, str]:
@@ -65,7 +71,7 @@ def classify_file(path: Path, df: pd.DataFrame | None, read_note: str) -> dict[s
     if is_generated_report(path):
         possible_features = ["이전 단계 분석 참고용"]
         readiness = "사용 불가"
-        issues = "reports/tables 산출물로 원천 데이터가 아니므로 feature engineering 원천으로 사용하지 않음"
+        issues = "reports/generated/tables 산출물로 원천 데이터가 아니므로 feature engineering 원천으로 사용하지 않음"
     elif name == "seoul_cafe_master.csv":
         possible_features = [
             "cafe_count_300m",
@@ -184,8 +190,8 @@ def inventory_files() -> pd.DataFrame:
 
 
 def subway_match_diagnostics() -> dict[str, str]:
-    station_files = [p for p in ROOT.glob("*.csv") if "역사마스터" in p.name]
-    time_files = [p for p in ROOT.glob("*.csv") if "지하철_호선별" in p.name and "시간대별" in p.name]
+    station_files = [p for p in RAWDATA_DIR.glob("*.csv") if "역사마스터" in p.name]
+    time_files = [p for p in RAWDATA_DIR.glob("*.csv") if "지하철_호선별" in p.name and "시간대별" in p.name]
     if not station_files or not time_files:
         return {
             "name_match_rate": "확인 불가",
@@ -435,32 +441,8 @@ def feature_feasibility() -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
-def markdown_table(df: pd.DataFrame, max_rows: int | None = None) -> str:
-    if max_rows is not None:
-        df = df.head(max_rows)
-    if df.empty:
-        return "_No rows._"
-
-    table = df.copy()
-    table = table.astype(object).where(pd.notna(table), "")
-    headers = [str(col) for col in table.columns]
-    rows = [[str(value) for value in row] for row in table.to_numpy()]
-    widths = [
-        max(len(headers[i]), *(len(row[i]) for row in rows))
-        for i in range(len(headers))
-    ]
-    header_line = "| " + " | ".join(headers[i].ljust(widths[i]) for i in range(len(headers))) + " |"
-    separator_line = "| " + " | ".join("-" * widths[i] for i in range(len(headers))) + " |"
-    body_lines = [
-        "| " + " | ".join(row[i].ljust(widths[i]) for i in range(len(headers))) + " |"
-        for row in rows
-    ]
-    return "\n".join([header_line, separator_line, *body_lines])
-
-
 def main() -> None:
-    REPORT_DIR.mkdir(exist_ok=True)
-    TABLE_DIR.mkdir(parents=True, exist_ok=True)
+    ensure_dirs(GENERATED_REPORT_DIR, TABLE_DIR)
 
     raw_files = inventory_files()
     feasibility = feature_feasibility()
@@ -561,7 +543,7 @@ def main() -> None:
         "",
         "## 1. 데이터 파일 inventory",
         "",
-        "전체 목록은 `reports/tables/raw_data_files.csv`에 저장했다. 아래는 프로젝트 데이터 파일 중심 요약이다.",
+        "전체 목록은 `reports/generated/tables/raw_data_files.csv`에 저장했다. 아래는 프로젝트 데이터 파일 중심 요약이다.",
         "",
         markdown_table(
             project_data[
@@ -587,7 +569,7 @@ def main() -> None:
         "",
         "## 4. Feature feasibility matrix",
         "",
-        "전체 matrix는 `reports/tables/feature_feasibility_matrix.csv`에 저장했다.",
+        "전체 matrix는 `reports/generated/tables/feature_feasibility_matrix.csv`에 저장했다.",
         "",
         markdown_table(feasibility),
         "",
@@ -615,8 +597,8 @@ def main() -> None:
         "## 9. 저장 산출물",
         "",
         "- `reports/03_raw_data_inventory.md`",
-        "- `reports/tables/raw_data_files.csv`",
-        "- `reports/tables/feature_feasibility_matrix.csv`",
+        "- `reports/generated/tables/raw_data_files.csv`",
+        "- `reports/generated/tables/feature_feasibility_matrix.csv`",
     ]
 
     REPORT_PATH.write_text("\n".join(lines) + "\n", encoding="utf-8-sig")

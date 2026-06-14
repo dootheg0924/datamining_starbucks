@@ -1,20 +1,24 @@
 from __future__ import annotations
 
 from datetime import datetime
-from pathlib import Path
 
 import pandas as pd
 
+from _utils import (
+    GENERATED_REPORT_DIR,
+    GENERATED_TABLE_DIR,
+    INTERMEDIATE_DATA_DIR,
+    ensure_dirs,
+    markdown_table,
+    relative_posix,
+)
 
-ROOT = Path(__file__).resolve().parents[1]
-DATA_DIR = ROOT / "data"
-REPORT_DIR = ROOT / "reports"
-TABLE_DIR = REPORT_DIR / "tables"
+TABLE_DIR = GENERATED_TABLE_DIR
 
-INPUT_PATH = DATA_DIR / "seoul_cafe_master_with_geo_features.csv"
-SEOUL_OUTPUT_PATH = DATA_DIR / "seoul_cafe_clustering_features_v1.csv"
-STARBUCKS_OUTPUT_PATH = DATA_DIR / "starbucks_clustering_features_v1.csv"
-REPORT_PATH = REPORT_DIR / "06_clustering_csv_finalization.md"
+INPUT_PATH = INTERMEDIATE_DATA_DIR / "seoul_cafe_master_with_geo_features.csv"
+SEOUL_OUTPUT_PATH = INTERMEDIATE_DATA_DIR / "seoul_cafe_clustering_features_v1.csv"
+STARBUCKS_OUTPUT_PATH = INTERMEDIATE_DATA_DIR / "starbucks_clustering_features_v1.csv"
+REPORT_PATH = GENERATED_REPORT_DIR / "06_clustering_csv_finalization.md"
 
 ID_COLUMNS = [
     "상호명",
@@ -54,27 +58,6 @@ EXCLUSION_REASONS = {
     "num_retail_500m": "상권 밀도 변수와 중복 가능성이 높아 clustering 입력에서는 제외",
     "num_convenience_500m": "상권 밀도 변수와 중복 가능성이 높아 clustering 입력에서는 제외",
 }
-
-
-def markdown_table(df: pd.DataFrame) -> str:
-    if df.empty:
-        return "_No rows._"
-
-    table = df.copy()
-    table = table.astype(object).where(pd.notna(table), "")
-    headers = [str(col) for col in table.columns]
-    rows = [[str(value) for value in row] for row in table.to_numpy()]
-    widths = [
-        max(len(headers[i]), *(len(row[i]) for row in rows))
-        for i in range(len(headers))
-    ]
-    header_line = "| " + " | ".join(headers[i].ljust(widths[i]) for i in range(len(headers))) + " |"
-    separator_line = "| " + " | ".join("-" * widths[i] for i in range(len(headers))) + " |"
-    body_lines = [
-        "| " + " | ".join(row[i].ljust(widths[i]) for i in range(len(headers))) + " |"
-        for row in rows
-    ]
-    return "\n".join([header_line, separator_line, *body_lines])
 
 
 def missing_table(df: pd.DataFrame, features: list[str], dataset_name: str) -> pd.DataFrame:
@@ -117,9 +100,7 @@ def summary_table(df: pd.DataFrame, features: list[str]) -> pd.DataFrame:
 
 
 def main() -> None:
-    DATA_DIR.mkdir(exist_ok=True)
-    REPORT_DIR.mkdir(exist_ok=True)
-    TABLE_DIR.mkdir(parents=True, exist_ok=True)
+    ensure_dirs(INTERMEDIATE_DATA_DIR, GENERATED_REPORT_DIR, TABLE_DIR)
 
     df = pd.read_csv(INPUT_PATH, encoding="utf-8-sig")
     missing_columns = [col for col in FINAL_COLUMNS if col not in df.columns]
@@ -167,12 +148,12 @@ def main() -> None:
     shape_table = pd.DataFrame(
         [
             {
-                "file": "data/seoul_cafe_clustering_features_v1.csv",
+                "file": "data/archive/intermediate/seoul_cafe_clustering_features_v1.csv",
                 "rows": seoul_slim.shape[0],
                 "columns": seoul_slim.shape[1],
             },
             {
-                "file": "data/starbucks_clustering_features_v1.csv",
+                "file": "data/archive/intermediate/starbucks_clustering_features_v1.csv",
                 "rows": starbucks_slim.shape[0],
                 "columns": starbucks_slim.shape[1],
             },
@@ -200,7 +181,7 @@ def main() -> None:
         "# 06 Clustering CSV Finalization",
         "",
         f"- 생성 시각: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
-        f"- 입력 파일: `{str(INPUT_PATH.relative_to(ROOT)).replace(chr(92), '/')}`",
+        f"- 입력 파일: `{relative_posix(INPUT_PATH)}`",
         "- 목적: 후보 반경 변수를 모두 담은 master에서 clustering 담당자가 바로 쓸 slim CSV 생성",
         "- 처리 원칙: 원본 파일 덮어쓰기 없음, 결측치 대체 없음, 이상치 제거 없음, clustering 실행 없음",
         "",
@@ -233,11 +214,11 @@ def main() -> None:
         "",
         "## 7. 저장 산출물",
         "",
-        "- `data/seoul_cafe_clustering_features_v1.csv`",
-        "- `data/starbucks_clustering_features_v1.csv`",
+        "- `data/archive/intermediate/seoul_cafe_clustering_features_v1.csv`",
+        "- `data/archive/intermediate/starbucks_clustering_features_v1.csv`",
         "- `reports/06_clustering_csv_finalization.md`",
-        "- `reports/tables/clustering_feature_missing_values.csv`",
-        "- `reports/tables/clustering_feature_summary_starbucks.csv`",
+        "- `reports/generated/tables/clustering_feature_missing_values.csv`",
+        "- `reports/generated/tables/clustering_feature_summary_starbucks.csv`",
     ]
 
     REPORT_PATH.write_text("\n".join(lines) + "\n", encoding="utf-8-sig")
