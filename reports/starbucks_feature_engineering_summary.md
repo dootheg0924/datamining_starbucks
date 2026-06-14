@@ -7,6 +7,7 @@
 - 입력: `data/final/starbucks_model_features_final.csv`
 - 스크립트: `scripts/feature_pipeline/08_starbucks_feature_engineering.py`
 - 출력: `data/modeling/starbucks_engineered_features_final.csv`
+- 후속 분석: `scripts/clustering/`의 클러스터링 고도화 입력
 - 행 수: 스타벅스 681개 매장
 - 컬럼 수: 식별/해석용 컬럼 7개 + 파생 feature 16개
 
@@ -35,4 +36,5 @@
 
 - 최종 모델 feature CSV는 feature 결측 보정이 끝난 상태입니다.
 - 이 파생 feature set은 모델링 및 클러스터링용 변환을 적용한 파일이며, `data/final/starbucks_model_features_final.csv`를 대체하지 않습니다.
+- 클러스터링 고도화 결과와 피드백 반영 근거는 `reports/starbucks_clustering_enhancement_summary.md`에 정리되어 있습니다.
 - EDA 표와 그림은 `scripts/eda/`로 재생성되며 `reports/generated/` 아래에 저장됩니다. 해당 폴더는 Git 추적에서 제외합니다.

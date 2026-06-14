@@ -1,0 +1,6 @@
+{
+  "large_effect_features": 15,
+  "top_discriminator": "offices",
+  "mean_stability": 0.789,
+  "gmm_kmeans_ari": 0.419
+}

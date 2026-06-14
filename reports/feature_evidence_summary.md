@@ -10,12 +10,16 @@
   - `reports/archive/analysis_archive_summary.md`
 - 스타벅스 feature engineering 근거
   - `reports/starbucks_feature_engineering_summary.md`
+- 클러스터링 고도화 근거
+  - `reports/starbucks_clustering_enhancement_summary.md`
 - 주요 근거 산출물
   - `reports/archive/tables/model_feature_v2_columns.csv`
   - `reports/archive/tables/model_feature_v2_status.csv`
   - `reports/archive/tables/model_feature_v2_summary_starbucks.csv`
   - `reports/archive/tables/new_feature_v2_summary.csv`
   - `reports/archive/tables/radius_feature_recommendation.csv`
+  - `reports/archive/tables/clustering/`
+  - `reports/archive/figures/clustering/`
 
 ## 1. 최종 Feature 구성
 
@@ -97,6 +101,7 @@
 | 신규 feature | `reports/archive/tables/new_feature_v2_summary.csv`, `reports/archive/tables/cafe_brand_taxonomy_summary.csv`, `reports/archive/tables/subway_peak_station_merge_failures.csv` |
 | 반경 선택 | `reports/archive/tables/radius_feature_recommendation.csv`, `reports/archive/tables/radius_feature_correlations.csv`, `reports/archive/figures/radius_selection/radius_feature_correlation_heatmap.png` |
 | 주요 상관 시각화 | `reports/archive/figures/geo_features/new_geo_feature_correlation_heatmap.png`, `reports/archive/figures/starbucks_only/correlation_heatmap_pearson.png`, `reports/archive/figures/starbucks_only/correlation_heatmap_spearman.png` |
+| 클러스터링 고도화 | `reports/starbucks_clustering_enhancement_summary.md`, `reports/archive/tables/clustering/`, `reports/archive/figures/clustering/` |
 
 ## 5. 모델링 전 주의사항
 

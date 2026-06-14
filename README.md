@@ -14,9 +14,11 @@
    - 스타벅스 전용 모델링 및 클러스터링용 파생 feature set입니다.
 5. `reports/starbucks_feature_engineering_summary.md`
    - 스타벅스 전용 파생 feature의 변환 방식과 선택 이유를 정리한 문서입니다.
-6. `docs/pipeline.md`
+6. `reports/starbucks_clustering_enhancement_summary.md`
+   - KMeans k=5 정당성, 대안 알고리즘, 이상치, 비스타벅스 투영, PDF 심화 검증을 정리한 클러스터링 고도화 보고서입니다.
+7. `docs/pipeline.md`
    - 전체 재현 파이프라인과 스크립트 실행 순서를 설명합니다.
-7. `docs/data_sources.md`
+8. `docs/data_sources.md`
    - 전체 재현에 필요한 로컬 raw data와 API key 설정을 설명합니다.
 
 ## 저장소 구조
@@ -36,11 +38,14 @@ docs/
 reports/
   feature_evidence_summary.md
   starbucks_feature_engineering_summary.md
+  starbucks_clustering_enhancement_summary.md
   archive/
     analysis_archive_summary.md
     figures/
+      clustering/
     html_maps/
     tables/
+      clustering/
   generated/
     # 재생성되는 상세 표와 그림. Git 추적 제외.
 
@@ -53,6 +58,8 @@ scripts/
     # 중간 모델 CSV -> data/final/
   eda/
     # 정리된 EDA 진단 스크립트
+  clustering/
+    # 클러스터링 고도화 분석과 검증 스크립트
 
 presentation/
   *.pdf
