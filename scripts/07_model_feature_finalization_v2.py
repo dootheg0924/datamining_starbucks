@@ -24,8 +24,8 @@ TABLE_DIR = GENERATED_TABLE_DIR
 
 BASE_PATH = INTERMEDIATE_DATA_DIR / "seoul_cafe_master_with_geo_features.csv"
 PEAK_PATH = RAWDATA_DIR / "subway_time_group_analysis.csv"
-SEOUL_OUTPUT_PATH = DATA_DIR / "seoul_cafe_model_features_v1.csv"
-STARBUCKS_OUTPUT_PATH = DATA_DIR / "starbucks_model_features_v1.csv"
+SEOUL_OUTPUT_PATH = INTERMEDIATE_DATA_DIR / "seoul_cafe_model_features_v1.csv"
+STARBUCKS_OUTPUT_PATH = INTERMEDIATE_DATA_DIR / "starbucks_model_features_v1.csv"
 REPORT_PATH = GENERATED_REPORT_DIR / "07_model_feature_finalization_v2.md"
 
 EARTH_RADIUS_KM = 6371.0088
@@ -416,12 +416,12 @@ def main() -> None:
     shape_table = pd.DataFrame(
         [
             {
-                "file": "data/seoul_cafe_model_features_v1.csv",
+                "file": relative_posix(SEOUL_OUTPUT_PATH),
                 "rows": final_all.shape[0],
                 "columns": final_all.shape[1],
             },
             {
-                "file": "data/starbucks_model_features_v1.csv",
+                "file": relative_posix(STARBUCKS_OUTPUT_PATH),
                 "rows": final_starbucks.shape[0],
                 "columns": final_starbucks.shape[1],
             },
@@ -523,8 +523,8 @@ def main() -> None:
         "",
         "## 12. 저장 산출물",
         "",
-        "- `data/seoul_cafe_model_features_v1.csv`",
-        "- `data/starbucks_model_features_v1.csv`",
+        f"- `{relative_posix(SEOUL_OUTPUT_PATH)}`",
+        f"- `{relative_posix(STARBUCKS_OUTPUT_PATH)}`",
         "- `reports/generated/07_model_feature_finalization_v2.md`",
         "- `reports/generated/tables/model_feature_v2_columns.csv`",
         "- `reports/generated/tables/model_feature_v2_status.csv`",

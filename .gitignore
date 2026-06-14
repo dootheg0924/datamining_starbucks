@@ -18,6 +18,7 @@ rawdata/
 data/raw/
 data/archive/
 reports/generated/
+incoming_*/
 
 # Common raw files if they are accidentally placed at project root
 seoul_cafe_master.csv

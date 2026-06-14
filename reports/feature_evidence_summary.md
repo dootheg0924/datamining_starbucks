@@ -3,10 +3,13 @@
 최종 모델 feature가 왜 포함되었는지, 어떤 통계/시각화 근거를 확인했는지 빠르게 파악하기 위한 핵심 요약 문서다.
 
 - 최종 데이터:
-  - `data/starbucks_model_features_v1.csv`: 스타벅스 681개 매장 기준 최종 모델 feature
-  - `data/seoul_cafe_model_features_v1.csv`: 서울 카페 22,305개 기준 최종 모델 feature
+  - `data/starbucks_model_features_final.csv`: 스타벅스 681개 매장 기준 최종 모델 feature
+  - `data/seoul_cafe_model_features_final.csv`: 서울 카페 22,305개 기준 최종 모델 feature. `nan_reason`은 보정 전 결측 원인을 기록한 provenance 컬럼이다.
+  - `data/starbucks_engineered_features_final.csv`: 스타벅스 전용 모델링/클러스터링용 파생 feature set
 - 압축 분석 기록:
   - `reports/archive/analysis_archive_summary.md`
+- 스타벅스 feature engineering 근거:
+  - `reports/starbucks_feature_engineering_summary.md`
 - 핵심 근거 표:
   - `reports/archive/tables/model_feature_v2_columns.csv`
   - `reports/archive/tables/model_feature_v2_status.csv`
@@ -16,7 +19,7 @@
 
 ## 1. 최종 feature 구성
 
-최종 CSV는 총 25개 컬럼이다. 이 중 7개는 식별/해석용 컬럼이고, 모델 feature는 18개다.
+최종 모델 feature CSV는 식별/해석용 컬럼 7개와 모델 feature 18개로 구성된다. 서울 전체 final CSV에는 추가로 `nan_reason` 1개 컬럼이 있어 총 26개 컬럼이고, 스타벅스 전용 final CSV는 `nan_reason`을 제외한 25개 컬럼이다.
 
 | 구분 | 컬럼 |
 | --- | --- |
@@ -75,15 +78,15 @@
 | --- | --- | --- |
 | 지리/교통 | `dist_nearest_subway` | 지하철 접근성의 방향성이 명확해 포함. 왜도가 커서 모델링 전 scaling 또는 log 변환 검토 |
 | 지리/교통 | `num_subway_500m` | 역세권 여부를 해석하기 쉬워 포함. 이산형 변수이고 IQR이 작아 이상치 해석 주의 |
-| 지리/교통 | `nearest_subway_ridership` | 가까운 역의 규모를 직접 반영하므로 포함. 스타벅스 기준 결측 8개 처리 필요 |
+| 지리/교통 | `nearest_subway_ridership` | 가까운 역의 규모를 직접 반영하므로 포함. 원천 결측은 final 생성 과정에서 보정하고 `nan_reason`에 원인을 남김 |
 | 지리/교통 | `num_bus_stops_300m` | 100m보다 안정적이고 500m보다 국지성이 좋아 포함 |
 | 지리/교통 | `subway_morning_peak_500m`, `subway_lunch_peak_500m`, `subway_evening_peak_500m` | 출근/점심/저녁 시간대 역세권 수요를 반영하기 위해 포함. 500m 내 역이 없으면 구조적 0 |
 | 상권 | `num_restaurants_500m`, `num_retail_500m`, `num_convenience_500m` | 주변 상권 활성도와 생활 상권 밀도를 반영. 서로 상관이 높을 수 있어 선형 모델에서는 공선성 확인 필요 |
 | 상권 | `independent_cafe_count_500m`, `low_price_cafe_count_500m`, `other_franchise_cafe_count_500m` | 단순 전체 카페 수보다 주변 카페 구성을 더 잘 표현하므로 포함 |
 | 상권 | `dist_nearest_starbucks` | 스타벅스 밀집형/독립 입지를 구분하는 해석력이 있어 포함. 왜도가 커서 변환 검토 |
-| 인구/통계 | `avg_income` | 구매력/지역 소득 수준을 반영하기 위해 포함. 결측 처리 필요 |
-| 인구/통계 | `num_offices` | 업무지구 성격을 반영하기 위해 포함. 결측과 왜도 처리 필요 |
-| 인구/통계 | `living_population` | 지역 체류/생활 규모를 반영하기 위해 포함. 결측 처리 필요 |
+| 인구/통계 | `avg_income` | 구매력/지역 소득 수준을 반영하기 위해 포함. 원천 결측은 final 생성 과정에서 보정 |
+| 인구/통계 | `num_offices` | 업무지구 성격을 반영하기 위해 포함. 원천 결측 보정 후에도 왜도 처리 검토 필요 |
+| 인구/통계 | `living_population` | 지역 체류/생활 규모를 반영하기 위해 포함. 원천 결측은 final 생성 과정에서 보정 |
 | 인구/통계 | `land_price` | 입지 가치와 상권 수준을 반영하기 위해 포함. 왜도가 커서 log 변환 검토 |
 
 ## 4. 확인 상태
@@ -98,10 +101,10 @@
 
 ## 5. 다음 담당자에게 전달할 모델링 주의점
 
-- 최종 CSV는 결측치 대체, 이상치 제거, scaling, log 변환을 하지 않은 상태다.
+- 최종 CSV는 feature 결측 보정을 적용했지만, 이상치 제거, scaling, log 변환은 하지 않은 상태다.
 - 거리 변수는 km 단위다.
 - 반경 count 변수는 변수명에 반경 단위가 포함되어 있다.
-- `avg_income`, `num_offices`, `living_population`, `nearest_subway_ridership`는 스타벅스 기준 결측이 있으므로 모델링 전에 처리 방법을 정해야 한다.
+- `nan_reason`은 현재 결측 여부가 아니라 보정 전 결측 원인을 설명하는 컬럼이므로, 모델 feature로 직접 쓰기보다 데이터 provenance로 해석하는 것이 좋다.
 - `dist_nearest_subway`, `dist_nearest_starbucks`, `num_retail_500m`, `num_offices`, `land_price`는 왜도가 커서 log 변환 또는 robust scaling 검토가 필요하다.
 - 상권 밀도 변수들은 서로 상관이 높을 수 있으므로, 선형 모델을 사용할 경우 다중공선성을 확인하는 것이 좋다.
 - peak 지하철 변수는 500m 내 역이 없는 경우 0이다. 이 0은 결측이 아니라 구조적 0으로 해석해야 한다.
