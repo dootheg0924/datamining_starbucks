@@ -10,7 +10,9 @@
    - 스타벅스 681개 매장 기준 최종 모델 feature입니다.
 3. `data/seoul_cafe_model_features_final.csv`
    - 서울 카페 22,305개 기준 최종 모델 feature입니다. `nan_reason`은 보정 전 결측 원인을 기록한 provenance 컬럼입니다.
-4. `reports/archive/analysis_archive_summary.md`
+4. `reports/starbucks_feature_engineering_summary.md`
+   - 스타벅스 전용 모델링/클러스터링 feature engineering 결정과 파생 변수 정의입니다.
+5. `reports/archive/analysis_archive_summary.md`
    - 기존 상세 archive 보고서 7개를 압축한 분석 흐름 요약입니다.
 
 ## Repository Structure
@@ -19,9 +21,11 @@
 data/
   seoul_cafe_model_features_final.csv
   starbucks_model_features_final.csv
+  starbucks_engineered_features_final.csv
 
 reports/
   feature_evidence_summary.md
+  starbucks_feature_engineering_summary.md
   archive/
     analysis_archive_summary.md
     figures/
@@ -39,8 +43,11 @@ scripts/
   05_radius_selection_eda.py
   06_clustering_csv_finalization.py
   07_model_feature_finalization_v2.py
+  08_starbucks_feature_engineering.py
   finalize_features/
     # intermediate model CSV -> final CSV
+  eda/
+    # cleaned EDA diagnostics from incoming notebooks/scripts
 
 docs/
   data_sources.md
@@ -61,7 +68,7 @@ Excluded local folders:
 - `rawdata/`: source CSV files
 - `data/archive/`: intermediate generated data
 - `reports/generated/`: regenerated detailed reports, tables, and figures
-- `incoming_1/`: original external handoff code, kept locally and not uploaded
+- `incoming_*/`: original external handoff code/notebooks, kept locally and not uploaded
 - `.venv/`: local Python virtual environment
 - `archive/notebooks/`: exploratory notebooks
 
@@ -97,14 +104,23 @@ python scripts/07_model_feature_finalization_v2.py
 python scripts/finalize_features/01_repair_feature_missing_values.py
 python scripts/finalize_features/02_add_nan_reason.py
 python scripts/finalize_features/03_extract_starbucks_final.py
+python scripts/08_starbucks_feature_engineering.py
 ```
 
 See `docs/data_sources.md` for required raw files and API-key notes.
+
+Optional EDA regeneration:
+
+```bash
+python scripts/eda/01_missing_outlier_diagnostics.py
+python scripts/eda/02_correlation_transform_diagnostics.py
+```
 
 ## Notes For The Next Person
 
 - The final Seoul-wide CSV has repaired feature missing values, while `nan_reason` preserves why those rows had missing source features before repair.
 - The final CSV files do not apply outlier removal, scaling, or log transformation.
+- `data/starbucks_engineered_features_final.csv` is a derived Starbucks-only modeling/clustering feature set with selected log transforms and feature consolidation.
 - Distance variables are stored in kilometers.
 - Radius count variables include the radius in the variable name, such as `num_bus_stops_300m`.
 - Some scripts require raw files that are not included in GitHub. Use the reports to identify the original input filenames if full reproduction is needed.

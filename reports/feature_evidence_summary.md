@@ -5,8 +5,11 @@
 - 최종 데이터:
   - `data/starbucks_model_features_final.csv`: 스타벅스 681개 매장 기준 최종 모델 feature
   - `data/seoul_cafe_model_features_final.csv`: 서울 카페 22,305개 기준 최종 모델 feature. `nan_reason`은 보정 전 결측 원인을 기록한 provenance 컬럼이다.
+  - `data/starbucks_engineered_features_final.csv`: 스타벅스 전용 모델링/클러스터링용 파생 feature set
 - 압축 분석 기록:
   - `reports/archive/analysis_archive_summary.md`
+- 스타벅스 feature engineering 근거:
+  - `reports/starbucks_feature_engineering_summary.md`
 - 핵심 근거 표:
   - `reports/archive/tables/model_feature_v2_columns.csv`
   - `reports/archive/tables/model_feature_v2_status.csv`

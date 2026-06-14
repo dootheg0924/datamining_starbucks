@@ -42,5 +42,5 @@ $env:KAKAO_REST_API_KEY = "..."
 python scripts/source_build/01_kakao_admin_codes.py
 ```
 
-API keys, raw files, generated intermediate CSVs, and the original
-`incoming_1/` handoff folder must not be committed.
+API keys, raw files, generated intermediate CSVs, and original `incoming_*/`
+handoff folders must not be committed.
