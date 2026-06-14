@@ -14,11 +14,12 @@ import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[2]
 DATA_DIR = ROOT / "data"
+FINAL_DATA_DIR = DATA_DIR / "final"
 TABLE_DIR = ROOT / "reports" / "generated" / "tables"
 FIGURE_DIR = ROOT / "reports" / "generated" / "figures" / "eda"
 
-STARBUCKS_PATH = DATA_DIR / "starbucks_model_features_final.csv"
-SEOUL_PATH = DATA_DIR / "seoul_cafe_model_features_final.csv"
+STARBUCKS_PATH = FINAL_DATA_DIR / "starbucks_model_features_final.csv"
+SEOUL_PATH = FINAL_DATA_DIR / "seoul_cafe_model_features_final.csv"
 ID_COLUMNS = {"상호명", "브랜드", "is_starbucks", "위도", "경도", "시군구명", "도로명주소"}
 
 

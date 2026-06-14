@@ -1,27 +1,37 @@
-# Starbucks Data Mining Handoff
+# 서울 스타벅스 데이터마이닝 재현 패키지
 
-서울 스타벅스 입지 분석 프로젝트의 인수인계용 저장소입니다. 이 저장소는 다음 담당자가 최종 feature CSV와 변수 선정 근거를 빠르게 확인할 수 있도록 정리한 버전입니다. 참고하여 다음 진행 상황을 업데이트해주세요.
+이 저장소는 서울 카페 및 스타벅스 입지 분석 프로젝트를 제출 가능한 재현 artifact로 정리한 버전입니다. GitHub에는 최종 분석에 필요한 코드, 문서, 최종 CSV만 포함하고, 원천 raw data와 재생성 가능한 중간 산출물은 로컬에서 별도로 관리합니다.
 
-## What To Open First
+## 먼저 볼 파일
 
 1. `reports/feature_evidence_summary.md`
-   - 최종 feature별 포함 이유, 통계/시각화 확인 여부, 반경 선택 근거, 제외 변수 이유를 정리한 핵심 문서입니다.
-2. `data/starbucks_model_features_final.csv`
+   - 최종 feature 구성, 반경 선택 근거, 변수별 모델링 주의사항을 요약한 핵심 문서입니다.
+2. `data/final/starbucks_model_features_final.csv`
    - 스타벅스 681개 매장 기준 최종 모델 feature입니다.
-3. `data/seoul_cafe_model_features_final.csv`
+3. `data/final/seoul_cafe_model_features_final.csv`
    - 서울 카페 22,305개 기준 최종 모델 feature입니다. `nan_reason`은 보정 전 결측 원인을 기록한 provenance 컬럼입니다.
-4. `reports/starbucks_feature_engineering_summary.md`
-   - 스타벅스 전용 모델링/클러스터링 feature engineering 결정과 파생 변수 정의입니다.
-5. `reports/archive/analysis_archive_summary.md`
-   - 기존 상세 archive 보고서 7개를 압축한 분석 흐름 요약입니다.
+4. `data/modeling/starbucks_engineered_features_final.csv`
+   - 스타벅스 전용 모델링 및 클러스터링용 파생 feature set입니다.
+5. `reports/starbucks_feature_engineering_summary.md`
+   - 스타벅스 전용 파생 feature의 변환 방식과 선택 이유를 정리한 문서입니다.
+6. `docs/pipeline.md`
+   - 전체 재현 파이프라인과 스크립트 실행 순서를 설명합니다.
+7. `docs/data_sources.md`
+   - 전체 재현에 필요한 로컬 raw data와 API key 설정을 설명합니다.
 
-## Repository Structure
+## 저장소 구조
 
 ```text
 data/
-  seoul_cafe_model_features_final.csv
-  starbucks_model_features_final.csv
-  starbucks_engineered_features_final.csv
+  final/
+    seoul_cafe_model_features_final.csv
+    starbucks_model_features_final.csv
+  modeling/
+    starbucks_engineered_features_final.csv
+
+docs/
+  data_sources.md
+  pipeline.md
 
 reports/
   feature_evidence_summary.md
@@ -29,54 +39,28 @@ reports/
   archive/
     analysis_archive_summary.md
     figures/
+    html_maps/
     tables/
   generated/
-    # ignored regenerated reports, tables, and figures
+    # 재생성되는 상세 표와 그림. Git 추적 제외.
 
 scripts/
   source_build/
-    # raw source files -> rawdata/seoul_cafe_master.csv
-  01_data_audit.py
-  02_starbucks_only_eda.py
-  03_raw_data_inventory.py
-  04_geo_feature_engineering.py
-  05_radius_selection_eda.py
-  06_clustering_csv_finalization.py
-  07_model_feature_finalization_v2.py
-  08_starbucks_feature_engineering.py
+    # 원천 파일 -> rawdata/seoul_cafe_master.csv
+  feature_pipeline/
+    # feature engineering 및 최종 후보 feature 생성
   finalize_features/
-    # intermediate model CSV -> final CSV
+    # 중간 모델 CSV -> data/final/
   eda/
-    # cleaned EDA diagnostics from incoming notebooks/scripts
-
-docs/
-  data_sources.md
-
-archive/
-  html_maps/
+    # 정리된 EDA 진단 스크립트
 
 presentation/
   *.pdf
 ```
 
-## Data Policy
+## 실행 환경
 
-Raw data files are not included in GitHub. They are excluded with `.gitignore` because they are source datasets, relatively large, and should be managed separately with their original sources and license information.
-
-Excluded local folders:
-
-- `rawdata/`: source CSV files
-- `data/archive/`: intermediate generated data
-- `reports/generated/`: regenerated detailed reports, tables, and figures
-- `incoming_*/`: original external handoff code/notebooks, kept locally and not uploaded
-- `.venv/`: local Python virtual environment
-- `archive/notebooks/`: exploratory notebooks
-
-The final CSV files in `data/` are included because they are the handoff-ready modeling datasets.
-
-## Environment
-
-Create a fresh environment and install dependencies:
+새 가상환경을 만들고 의존성을 설치합니다.
 
 ```bash
 python -m venv .venv
@@ -84,44 +68,8 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-The scripts mainly use `pandas`, `numpy`, `scipy`, `matplotlib`, and `seaborn`.
+주요 스크립트는 `pandas`, `numpy`, `scipy`, `matplotlib`, `seaborn`을 사용합니다. Excel 원천 파일을 점검하는 인벤토리 단계에서는 `openpyxl`이 필요할 수 있습니다.
 
-## Reproduction Flow
+## 재현 흐름
 
-With raw data available locally, the intended flow is:
-
-```bash
-python scripts/source_build/01_kakao_admin_codes.py
-python scripts/source_build/02_build_cafe_master.py
-python scripts/source_build/03_build_subway_station_master.py
-python scripts/source_build/04_add_master_features.py
-
-python scripts/04_geo_feature_engineering.py
-python scripts/05_radius_selection_eda.py
-python scripts/06_clustering_csv_finalization.py
-python scripts/07_model_feature_finalization_v2.py
-
-python scripts/finalize_features/01_repair_feature_missing_values.py
-python scripts/finalize_features/02_add_nan_reason.py
-python scripts/finalize_features/03_extract_starbucks_final.py
-python scripts/08_starbucks_feature_engineering.py
-```
-
-See `docs/data_sources.md` for required raw files and API-key notes.
-
-Optional EDA regeneration:
-
-```bash
-python scripts/eda/01_missing_outlier_diagnostics.py
-python scripts/eda/02_correlation_transform_diagnostics.py
-```
-
-## Notes For The Next Person
-
-- The final Seoul-wide CSV has repaired feature missing values, while `nan_reason` preserves why those rows had missing source features before repair.
-- The final CSV files do not apply outlier removal, scaling, or log transformation.
-- `data/starbucks_engineered_features_final.csv` is a derived Starbucks-only modeling/clustering feature set with selected log transforms and feature consolidation.
-- Distance variables are stored in kilometers.
-- Radius count variables include the radius in the variable name, such as `num_bus_stops_300m`.
-- Some scripts require raw files that are not included in GitHub. Use the reports to identify the original input filenames if full reproduction is needed.
-- The most important modeling caveats are summarized in `reports/feature_evidence_summary.md`.
+전체 재현 순서는 `docs/pipeline.md`를 참고하세요. 필요한 원천 파일과 Kakao API key 설정은 `docs/data_sources.md`에 정리되어 있습니다.

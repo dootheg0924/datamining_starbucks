@@ -13,10 +13,11 @@ import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[2]
 DATA_DIR = ROOT / "data"
+FINAL_DATA_DIR = DATA_DIR / "final"
 TABLE_DIR = ROOT / "reports" / "generated" / "tables"
 FIGURE_DIR = ROOT / "reports" / "generated" / "figures" / "eda"
 
-STARBUCKS_PATH = DATA_DIR / "starbucks_model_features_final.csv"
+STARBUCKS_PATH = FINAL_DATA_DIR / "starbucks_model_features_final.csv"
 FEATURES = [
     "dist_nearest_subway",
     "num_subway_500m",

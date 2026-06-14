@@ -5,8 +5,10 @@ from pathlib import Path
 import pandas as pd
 
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 DATA_DIR = ROOT / "data"
+FINAL_DATA_DIR = DATA_DIR / "final"
+MODELING_DATA_DIR = DATA_DIR / "modeling"
 RAWDATA_DIR = ROOT / "rawdata"
 REPORT_DIR = ROOT / "reports"
 GENERATED_REPORT_DIR = REPORT_DIR / "generated"
