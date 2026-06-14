@@ -1,0 +1,17 @@
+﻿feature,eta_squared
+avg_income,0.071
+bus_stops_300m,0.172
+log_dist_starbucks,0.372
+subway_ridership,0.398
+land_price,0.427
+low_price_cafe_500m,0.451
+log_retail_500m,0.457
+franchise_cafe_500m,0.501
+log_dist_subway,0.515
+subway_count_cat,0.528
+living_pop,0.531
+peak_avg,0.538
+convenience_500m,0.596
+restaurants_500m,0.681
+indie_cafe_500m,0.71
+offices,0.741
