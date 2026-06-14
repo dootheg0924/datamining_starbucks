@@ -7,12 +7,14 @@ import numpy as np
 import pandas as pd
 
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 DATA_DIR = ROOT / "data"
+FINAL_DATA_DIR = DATA_DIR / "final"
+MODELING_DATA_DIR = DATA_DIR / "modeling"
 REPORT_TABLE_DIR = ROOT / "reports" / "generated" / "tables"
 
-INPUT_PATH = DATA_DIR / "starbucks_model_features_final.csv"
-OUTPUT_PATH = DATA_DIR / "starbucks_engineered_features_final.csv"
+INPUT_PATH = FINAL_DATA_DIR / "starbucks_model_features_final.csv"
+OUTPUT_PATH = MODELING_DATA_DIR / "starbucks_engineered_features_final.csv"
 SUMMARY_PATH = REPORT_TABLE_DIR / "starbucks_engineered_feature_summary.csv"
 
 META_COLUMNS = ["상호명", "브랜드", "is_starbucks", "위도", "경도", "시군구명", "도로명주소"]

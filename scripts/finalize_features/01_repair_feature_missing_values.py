@@ -11,6 +11,7 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parents[2]
 RAWDATA_DIR = ROOT / "rawdata"
 DATA_DIR = ROOT / "data"
+FINAL_DATA_DIR = DATA_DIR / "final"
 INTERMEDIATE_DIR = DATA_DIR / "archive" / "intermediate"
 
 ADMIN_FEATURES = ["avg_income", "num_offices", "living_population"]
@@ -225,7 +226,7 @@ def repair_admin_features(
 def main() -> None:
     parser = argparse.ArgumentParser(description="Repair missing model feature values.")
     parser.add_argument("--target", type=Path, default=INTERMEDIATE_DIR / "seoul_cafe_model_features_v1.csv")
-    parser.add_argument("--output", type=Path, default=DATA_DIR / "seoul_cafe_model_features_final.csv")
+    parser.add_argument("--output", type=Path, default=FINAL_DATA_DIR / "seoul_cafe_model_features_final.csv")
     parser.add_argument("--master", type=Path, default=RAWDATA_DIR / "seoul_cafe_master.csv")
     parser.add_argument("--station-master", type=Path, default=RAWDATA_DIR / "서울_지하철역.csv")
     parser.add_argument(

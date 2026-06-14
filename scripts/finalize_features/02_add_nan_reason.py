@@ -10,6 +10,7 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parents[2]
 RAWDATA_DIR = ROOT / "rawdata"
 DATA_DIR = ROOT / "data"
+FINAL_DATA_DIR = DATA_DIR / "final"
 INTERMEDIATE_DIR = DATA_DIR / "archive" / "intermediate"
 
 ADMIN_FEATURES = ["avg_income", "num_offices", "living_population"]
@@ -108,7 +109,7 @@ def reason_for_row(row: pd.Series, starbucks_nan_addresses: set[str]) -> str:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Add nan_reason provenance to the Seoul model CSV.")
-    parser.add_argument("--target", type=Path, default=DATA_DIR / "seoul_cafe_model_features_final.csv")
+    parser.add_argument("--target", type=Path, default=FINAL_DATA_DIR / "seoul_cafe_model_features_final.csv")
     parser.add_argument("--output", type=Path, default=None)
     parser.add_argument(
         "--reason-source",

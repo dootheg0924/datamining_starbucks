@@ -8,14 +8,15 @@ import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[2]
 DATA_DIR = ROOT / "data"
+FINAL_DATA_DIR = DATA_DIR / "final"
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="Derive the Starbucks-only final CSV from the Seoul-wide final CSV."
     )
-    parser.add_argument("--input", type=Path, default=DATA_DIR / "seoul_cafe_model_features_final.csv")
-    parser.add_argument("--output", type=Path, default=DATA_DIR / "starbucks_model_features_final.csv")
+    parser.add_argument("--input", type=Path, default=FINAL_DATA_DIR / "seoul_cafe_model_features_final.csv")
+    parser.add_argument("--output", type=Path, default=FINAL_DATA_DIR / "starbucks_model_features_final.csv")
     parser.add_argument("--drop-columns", nargs="*", default=["nan_reason"])
     args = parser.parse_args()
 
