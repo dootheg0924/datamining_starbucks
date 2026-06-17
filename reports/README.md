@@ -16,12 +16,10 @@
 
 ## 3. Classification
 
-- [`classification/README.md`](classification/README.md)
-  - Classification 문서의 진입점입니다. 무엇을 먼저 읽을지와 PU learning 구조를 설명합니다.
-- [`classification/modeling_summary.md`](classification/modeling_summary.md)
-  - Classification 전체 모델링 보고서입니다.
-- [`classification/district_trust_summary.md`](classification/district_trust_summary.md)
-  - 상권 단위 보강과 신뢰성 지표를 정리한 보고서입니다.
+- [`classification/01_modeling_summary.md`](classification/01_modeling_summary.md)
+  - 카페 단위 1차 PU classification 분석입니다. 비스타벅스를 `Unlabeled`로 보는 이유, 분류 피처, 지표, 모델 비교, 카페 단위 한계를 정리합니다.
+- [`classification/02_district_trust_summary.md`](classification/02_district_trust_summary.md)
+  - 상권 단위 고도화와 최종 결론 보고서입니다. 카페 단위 한계를 보강하고 서울대 결론의 신뢰성을 검증합니다.
 
 ## 4. Archive와 Generated
 
@@ -34,5 +32,5 @@
 
 1. 최종 feature가 궁금하면 `feature_evidence_summary.md`
 2. 클러스터링 결론이 궁금하면 `starbucks_clustering_enhancement_summary.md`
-3. 분류/입점예측이 궁금하면 `classification/README.md` → `classification/modeling_summary.md`
-4. 서울대 결론의 신뢰성까지 보려면 `classification/district_trust_summary.md`
+3. 분류/입점예측이 궁금하면 `classification/01_modeling_summary.md`
+4. 최종 서울대 결론과 신뢰성까지 보려면 `classification/02_district_trust_summary.md`

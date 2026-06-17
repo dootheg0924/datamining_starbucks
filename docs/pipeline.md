@@ -143,5 +143,5 @@ python scripts/06_classification/19_district_final.py
 - `data/final/starbucks_model_features_final.csv`: 최종 feature table에서 스타벅스만 추출한 subset
 - `data/modeling/starbucks_engineered_features_final.csv`: 스타벅스 전용 모델링 및 클러스터링용 파생 feature set
 - `reports/starbucks_clustering_enhancement_summary.md`: 클러스터링 고도화 결과와 피드백 반영 요약
-- `reports/classification/modeling_summary.md`: PU learning 기반 분류 모델링 결과와 서울대 시뮬레이션 요약
-- `reports/classification/district_trust_summary.md`: 상권 단위 재구성과 분류 신뢰지표 요약
+- `reports/classification/01_modeling_summary.md`: 카페 단위 1차 PU classification 분석과 상권 단위 보강 필요성
+- `reports/classification/02_district_trust_summary.md`: 상권 단위 고도화, 최종 서울대 결론, 신뢰성 검증 요약

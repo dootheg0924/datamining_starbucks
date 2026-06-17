@@ -8,7 +8,7 @@
 
 “스타벅스는 감각적으로 좋은 자리에만 들어간다”는 통설을 데이터마이닝으로 검증하고자 합니다. Starbucks의 자체 상권 분석 시스템처럼, 개별 카페 좌표를 교통, 유동, 상권, 인구·경제 정보를 담은 입지 벡터로 변환하고 서울 전체 카페 공간에서 스타벅스형 입지를 찾고자 합니다.
 
-분석 단위는 행정동이 아니라 **개별 카페 좌표**입니다. 제안발표와 중간발표에서는 데이터 수집, 초기 feature 설계, 결측·이상치 처리, 스타벅스 입지 유형화를 진행했고, 이후에는 서울 전체 카페 22,305개를 대상으로 스타벅스 입점 적합도 예측과 서울대 관악캠퍼스 검증까지 확장했습니다.
+기본 분석 단위는 행정동이 아니라 **개별 카페 좌표**입니다. 다만 최종 해석에서는 카페 단위의 한계를 보강하기 위해 DBSCAN 기반 **상권 단위**로 한 번 더 검증했습니다. 제안발표와 중간발표에서는 데이터 수집, 초기 feature 설계, 결측·이상치 처리, 스타벅스 입지 유형화를 진행했고, 이후에는 서울 전체 카페 22,305개를 대상으로 스타벅스 입점 적합도 예측과 서울대 관악캠퍼스 검증까지 확장했습니다.
 
 전체 프로젝트 흐름은 다음과 같습니다.
 
@@ -58,14 +58,11 @@ GitHub에는 원천 raw data 대신 최종 재현 artifact만 포함합니다.
 3. [`reports/starbucks_clustering_enhancement_summary.md`](reports/starbucks_clustering_enhancement_summary.md)  
    KMeans k=5, 대안 알고리즘, 이상치, 비스타벅스 투영을 정리한 클러스터링 보고서입니다.
 
-4. [`reports/classification/README.md`](reports/classification/README.md)  
-   Classification 문서의 진입점입니다. PU learning, 지표, 상권 단위 보강을 어떤 순서로 읽어야 하는지 정리했습니다.
+4. [`reports/classification/01_modeling_summary.md`](reports/classification/01_modeling_summary.md)  
+   카페 단위 1차 PU classification 분석입니다. 비스타벅스를 `Unlabeled`로 보는 이유, 분류 피처, 지표, 모델 비교, 카페 단위 한계를 정리했습니다.
 
-5. [`reports/classification/modeling_summary.md`](reports/classification/modeling_summary.md)  
-   분류 모델링 전체 보고서입니다.
-
-6. [`reports/classification/district_trust_summary.md`](reports/classification/district_trust_summary.md)  
-   상권 단위 분석과 신뢰성 지표 보고서입니다.
+5. [`reports/classification/02_district_trust_summary.md`](reports/classification/02_district_trust_summary.md)  
+   상권 단위 고도화와 최종 결론 보고서입니다. 카페 단위 한계를 상권 단위로 보강하고, 서울대 결론의 신뢰성을 검증합니다.
 
 ## 저장소 구조
 
@@ -91,11 +88,8 @@ reports/
   starbucks_feature_engineering_summary.md
   starbucks_clustering_enhancement_summary.md
   classification/
-    README.md
-    modeling_summary.md
-    district_trust_summary.md
-    feature_engineering.md
-    metric_reference.md
+    01_modeling_summary.md
+    02_district_trust_summary.md
   archive/
     figures/
     tables/
