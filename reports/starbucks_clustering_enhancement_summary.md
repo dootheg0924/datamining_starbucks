@@ -4,7 +4,7 @@
 > **작성일**: 2026-06-14  
 > **범위**: 중간발표 이후 클러스터링 단계 고도화  
 > **입력**: `data/modeling/starbucks_engineered_features_final.csv`, `data/final/seoul_cafe_model_features_final.csv`  
-> **재현 코드**: `scripts/clustering/`  
+> **재현 코드**: `scripts/05_clustering/`  
 > **보존 산출물**: `reports/archive/tables/clustering/`, `reports/archive/figures/clustering/`
 
 이 보고서는 현재 repo의 공식 feature 파일을 기준으로 재생성한 클러스터링 고도화 결과를 정리한다. `incoming_clustering/`의 예전 보고서는 별도 입력 파일을 기준으로 작성되어 일부 수치가 달랐으므로, Git 편입본에서는 현재 재현 파이프라인과 일치하는 수치만 사용한다.
@@ -33,7 +33,7 @@
 
 ## 1. 기준 클러스터
 
-KMeans k=5의 원시 label은 실행 환경과 입력에 따라 의미 순서가 바뀔 수 있다. `scripts/clustering/_common.py`는 cluster profile을 기준으로 C0~C4 persona label을 고정한다.
+KMeans k=5의 원시 label은 실행 환경과 입력에 따라 의미 순서가 바뀔 수 있다. `scripts/05_clustering/_common.py`는 cluster profile을 기준으로 C0~C4 persona label을 고정한다.
 
 | Persona | 크기 | 해석 |
 |---|---:|---|
@@ -190,10 +190,10 @@ B는 지리적으로 더 뭉치지만 Silhouette이 낮다. 위경도가 상권 
 ## 5. 재현 방법
 
 ```bash
-python scripts/clustering/01_validity_and_algorithms.py
-python scripts/clustering/02_visualization.py
-python scripts/clustering/03_outlier_and_projection.py
-python scripts/clustering/04_pdf_deepening.py
+python scripts/05_clustering/01_validity_and_algorithms.py
+python scripts/05_clustering/02_visualization.py
+python scripts/05_clustering/03_outlier_and_projection.py
+python scripts/05_clustering/04_pdf_deepening.py
 ```
 
 기본 출력은 `reports/generated/clustering/`에 저장되며 Git에는 포함하지 않는다. 보고서에 사용한 현재 스냅샷은 `reports/archive/tables/clustering/`, `reports/archive/figures/clustering/`에 보존한다.
