@@ -48,7 +48,7 @@ def load_starbucks_nan_addresses(path: Path | None) -> set[str]:
     if path is None or not path.exists():
         raise FileNotFoundError(
             "Starbucks administrative-code CSV is required to reproduce nan_reason. "
-            "Run scripts/source_build/01_kakao_admin_codes.py first or pass --starbucks-admin."
+            "Run scripts/01_source_build/01_kakao_admin_codes.py first or pass --starbucks-admin."
         )
     sbux = pd.read_csv(path, encoding="utf-8-sig")
     if "행정동코드" not in sbux.columns or "도로명주소" not in sbux.columns:

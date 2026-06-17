@@ -39,7 +39,7 @@
 ## 4. 재생성 메모
 
 - 원천 데이터는 `rawdata/`에 있어야 하며 Git에는 포함하지 않습니다.
-- `scripts/feature_pipeline/04_geo_feature_engineering.py`는 `data/archive/intermediate/seoul_cafe_master_with_geo_features.csv`를 생성합니다.
-- `scripts/feature_pipeline/05_radius_selection_eda.py`와 `scripts/feature_pipeline/06_clustering_csv_finalization.py`는 중간 master를 입력으로 사용합니다.
-- `scripts/feature_pipeline/07_model_feature_finalization_v2.py`는 최종 후보 모델 CSV 2개를 생성하고, `scripts/finalize_features/` 단계가 이를 `data/final/`로 정리합니다.
+- `scripts/02_feature_pipeline/04_geo_feature_engineering.py`는 `data/archive/intermediate/seoul_cafe_master_with_geo_features.csv`를 생성합니다.
+- `scripts/02_feature_pipeline/05_radius_selection_eda.py`와 `scripts/02_feature_pipeline/06_clustering_csv_finalization.py`는 중간 master를 입력으로 사용합니다.
+- `scripts/02_feature_pipeline/07_model_feature_finalization_v2.py`는 최종 후보 모델 CSV 2개를 생성하고, `scripts/03_finalize_features/` 단계가 이를 `data/final/`로 정리합니다.
 - 모든 상세 리포트와 재생성 그림은 `reports/generated/` 아래에 생성됩니다.

@@ -33,11 +33,11 @@
 
 ## Kakao API key
 
-`scripts/source_build/01_kakao_admin_codes.py`는 스타벅스 도로명주소에 행정동 코드를 붙이기 위해 Kakao Local API를 호출합니다. API key는 코드에 직접 쓰지 말고 환경변수로 설정합니다.
+`scripts/01_source_build/01_kakao_admin_codes.py`는 스타벅스 도로명주소에 행정동 코드를 붙이기 위해 Kakao Local API를 호출합니다. API key는 코드에 직접 쓰지 말고 환경변수로 설정합니다.
 
 ```powershell
 $env:KAKAO_REST_API_KEY = "..."
-python scripts/source_build/01_kakao_admin_codes.py
+python scripts/01_source_build/01_kakao_admin_codes.py
 ```
 
 API key, raw data, 재생성 가능한 중간 CSV는 Git에 커밋하지 않습니다.
