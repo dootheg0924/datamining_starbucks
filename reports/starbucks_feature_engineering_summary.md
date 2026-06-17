@@ -1,6 +1,6 @@
 # 스타벅스 Feature Engineering 요약
 
-이 문서는 외부 인수인계 자료에서 확인한 feature engineering 결정을 현재 최종 CSV 기준으로 정리한 것입니다.
+이 문서는 feature engineering 결정을 최종 CSV 기준으로 정리한 것입니다.
 
 ## 산출물
 
@@ -31,10 +31,3 @@
 | `offices` | `num_offices` | 원값 유지 | 업무지구 수요 규모를 나타냅니다. |
 | `living_pop` | `living_population` | 원값 유지 | 거주 및 생활 인구 규모를 나타냅니다. |
 | `land_price` | `land_price` | 원값 유지 | 공시지가의 절대 차이가 입지 수준 해석에 의미 있습니다. |
-
-## 주의사항
-
-- 최종 모델 feature CSV는 feature 결측 보정이 끝난 상태입니다.
-- 이 파생 feature set은 모델링 및 클러스터링용 변환을 적용한 파일이며, `data/final/starbucks_model_features_final.csv`를 대체하지 않습니다.
-- 클러스터링 고도화 결과와 피드백 반영 근거는 `reports/starbucks_clustering_enhancement_summary.md`에 정리되어 있습니다.
-- EDA 표와 그림은 `scripts/04_eda/`로 재생성되며 `reports/generated/` 아래에 저장됩니다. 해당 폴더는 Git 추적에서 제외합니다.
