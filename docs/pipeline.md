@@ -24,7 +24,9 @@ scripts/
   05_clustering/
     스타벅스 파생 feature -> 클러스터링 검증 표와 그림
   06_classification/
-    전체 서울 카페 feature -> PU learning 분류 모델링, 페르소나 연결, 서울대/상권 검증
+    00_prepare.py -> 공통 classification dataset 생성
+    01_cafe_level/ -> 카페 단위 1차 PU learning, 페르소나 연결, 서울대 예비 검증
+    02_district_level/ -> DBSCAN 상권 단위 PU learning, feature importance, 신규 입점 검증
 ```
 
 ## 전체 재생성 순서
@@ -53,25 +55,29 @@ python scripts/05_clustering/03_outlier_and_projection.py
 python scripts/05_clustering/04_pdf_deepening.py
 
 python scripts/06_classification/00_prepare.py
-python scripts/06_classification/01_pu_baselines.py
-python scripts/06_classification/02_cv_comparison.py
-python scripts/06_classification/03_model_zoo.py
-python scripts/06_classification/04_pu_twostep.py
-python scripts/06_classification/05_pu_twostep_pos.py
-python scripts/06_classification/06_pu_final.py
-python scripts/06_classification/07_personas.py
-python scripts/06_classification/08_integration.py
-python scripts/06_classification/09_snu_simulation.py
-python scripts/06_classification/10_validation.py
-python scripts/06_classification/11_interpretation.py
-python scripts/06_classification/12_figures.py
-python scripts/06_classification/13_pu_advanced.py
-python scripts/06_classification/14_pu_iterative.py
-python scripts/06_classification/15_trust_metrics.py
-python scripts/06_classification/16_metric_curves.py
-python scripts/06_classification/17_districts.py
-python scripts/06_classification/18_district_advanced.py
-python scripts/06_classification/19_district_final.py
+python scripts/06_classification/01_cafe_level/01_pu_baselines.py
+python scripts/06_classification/01_cafe_level/02_cv_comparison.py
+python scripts/06_classification/01_cafe_level/03_model_zoo.py
+python scripts/06_classification/01_cafe_level/04_pu_twostep.py
+python scripts/06_classification/01_cafe_level/05_pu_twostep_pos.py
+python scripts/06_classification/01_cafe_level/06_pu_final.py
+python scripts/06_classification/01_cafe_level/07_personas.py
+python scripts/06_classification/01_cafe_level/08_integration.py
+python scripts/06_classification/01_cafe_level/09_snu_simulation.py
+python scripts/06_classification/01_cafe_level/10_validation.py
+python scripts/06_classification/01_cafe_level/11_interpretation.py
+python scripts/06_classification/01_cafe_level/12_figures.py
+python scripts/06_classification/01_cafe_level/13_pu_advanced.py
+python scripts/06_classification/01_cafe_level/14_pu_iterative.py
+python scripts/06_classification/01_cafe_level/15_trust_metrics.py
+python scripts/06_classification/01_cafe_level/16_metric_curves.py
+python scripts/06_classification/02_district_level/17_districts.py
+python scripts/06_classification/02_district_level/18_district_advanced.py
+python scripts/06_classification/02_district_level/19_district_final.py
+python scripts/06_classification/02_district_level/20_district_persona_bridge.py
+python scripts/06_classification/02_district_level/21_district_feature_importance.py
+python scripts/06_classification/02_district_level/22_new_starbucks_district_projection.py
+python scripts/06_classification/02_district_level/23_district_model_selection.py
 ```
 
 `scripts/01_source_build/01_kakao_admin_codes.py`는 Kakao Local API key가 필요합니다. 자세한 설정은 `docs/data_sources.md`를 참고하세요.
@@ -112,29 +118,34 @@ python scripts/05_clustering/04_pdf_deepening.py
 
 ## Classification 재생성
 
-분류 스크립트는 `data/final/seoul_cafe_model_features_final.csv`를 읽어 `reports/generated/classification/` 아래에 데이터셋, 모델 출력, 그림, 로그를 재생성합니다. 이 폴더는 Git 추적에서 제외되며, 보고서에 사용한 그림 스냅샷은 `reports/archive/figures/classification/`, 로그 스냅샷은 `reports/archive/classification/logs/`에 보존합니다.
+분류 스크립트는 `data/final/seoul_cafe_model_features_final.csv`를 읽어 `reports/generated/classification/` 아래에 데이터셋, 모델 출력, 그림, 로그를 재생성합니다. 공통 데이터셋은 `reports/generated/classification/data/`에, 카페 단위 1단계 산출물은 `reports/generated/classification/01_cafe_level/`에, 상권 단위 2단계 산출물은 `reports/generated/classification/02_district_level/`에 저장됩니다. 이 폴더는 Git 추적에서 제외되며, 보고서에 사용한 그림/표/로그 스냅샷도 `reports/archive/.../classification/01_cafe_level/`, `reports/archive/.../classification/02_district_level/`로 나눠 보존합니다.
 
 ```bash
 python scripts/06_classification/00_prepare.py
-python scripts/06_classification/01_pu_baselines.py
-python scripts/06_classification/02_cv_comparison.py
-python scripts/06_classification/03_model_zoo.py
-python scripts/06_classification/04_pu_twostep.py
-python scripts/06_classification/05_pu_twostep_pos.py
-python scripts/06_classification/06_pu_final.py
-python scripts/06_classification/07_personas.py
-python scripts/06_classification/08_integration.py
-python scripts/06_classification/09_snu_simulation.py
-python scripts/06_classification/10_validation.py
-python scripts/06_classification/11_interpretation.py
-python scripts/06_classification/12_figures.py
-python scripts/06_classification/13_pu_advanced.py
-python scripts/06_classification/14_pu_iterative.py
-python scripts/06_classification/15_trust_metrics.py
-python scripts/06_classification/16_metric_curves.py
-python scripts/06_classification/17_districts.py
-python scripts/06_classification/18_district_advanced.py
-python scripts/06_classification/19_district_final.py
+python scripts/06_classification/01_cafe_level/01_pu_baselines.py
+python scripts/06_classification/01_cafe_level/02_cv_comparison.py
+python scripts/06_classification/01_cafe_level/03_model_zoo.py
+python scripts/06_classification/01_cafe_level/04_pu_twostep.py
+python scripts/06_classification/01_cafe_level/05_pu_twostep_pos.py
+python scripts/06_classification/01_cafe_level/06_pu_final.py
+python scripts/06_classification/01_cafe_level/07_personas.py
+python scripts/06_classification/01_cafe_level/08_integration.py
+python scripts/06_classification/01_cafe_level/09_snu_simulation.py
+python scripts/06_classification/01_cafe_level/10_validation.py
+python scripts/06_classification/01_cafe_level/11_interpretation.py
+python scripts/06_classification/01_cafe_level/12_figures.py
+python scripts/06_classification/01_cafe_level/13_pu_advanced.py
+python scripts/06_classification/01_cafe_level/14_pu_iterative.py
+python scripts/06_classification/01_cafe_level/15_trust_metrics.py
+python scripts/06_classification/01_cafe_level/16_metric_curves.py
+
+python scripts/06_classification/02_district_level/17_districts.py
+python scripts/06_classification/02_district_level/18_district_advanced.py
+python scripts/06_classification/02_district_level/19_district_final.py
+python scripts/06_classification/02_district_level/20_district_persona_bridge.py
+python scripts/06_classification/02_district_level/21_district_feature_importance.py
+python scripts/06_classification/02_district_level/22_new_starbucks_district_projection.py
+python scripts/06_classification/02_district_level/23_district_model_selection.py
 ```
 
 ## 주요 출력 파일
@@ -143,5 +154,5 @@ python scripts/06_classification/19_district_final.py
 - `data/final/starbucks_model_features_final.csv`: 최종 feature table에서 스타벅스만 추출한 subset
 - `data/modeling/starbucks_engineered_features_final.csv`: 스타벅스 전용 모델링 및 클러스터링용 파생 feature set
 - `reports/starbucks_clustering_enhancement_summary.md`: 클러스터링 고도화 결과와 피드백 반영 요약
-- `reports/classification/01_modeling_summary.md`: 카페 단위 1차 PU classification 분석과 상권 단위 보강 필요성
-- `reports/classification/02_district_trust_summary.md`: 상권 단위 고도화, 최종 서울대 결론, 신뢰성 검증 요약
+- `reports/01_modeling_summary.md`: 카페 단위 1차 PU classification 분석과 상권 단위 보강 필요성
+- `reports/02_district_trust_summary.md`: 상권 단위 고도화, 최종 서울대 결론, 신뢰성 검증 요약

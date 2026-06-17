@@ -58,10 +58,10 @@ GitHub에는 원천 raw data 대신 최종 재현 artifact만 포함합니다.
 3. [`reports/starbucks_clustering_enhancement_summary.md`](reports/starbucks_clustering_enhancement_summary.md)  
    KMeans k=5, 대안 알고리즘, 이상치, 비스타벅스 투영을 정리한 클러스터링 보고서입니다.
 
-4. [`reports/classification/01_modeling_summary.md`](reports/classification/01_modeling_summary.md)  
+4. [`reports/01_modeling_summary.md`](reports/01_modeling_summary.md)  
    카페 단위 1차 PU classification 분석입니다. 비스타벅스를 `Unlabeled`로 보는 이유, 분류 피처, 지표, 모델 비교, 카페 단위 한계를 정리했습니다.
 
-5. [`reports/classification/02_district_trust_summary.md`](reports/classification/02_district_trust_summary.md)  
+5. [`reports/02_district_trust_summary.md`](reports/02_district_trust_summary.md)  
    상권 단위 고도화와 최종 결론 보고서입니다. 카페 단위 한계를 상권 단위로 보강하고, 서울대 결론의 신뢰성을 검증합니다.
 
 ## 저장소 구조
@@ -87,9 +87,8 @@ reports/
   feature_evidence_summary.md
   starbucks_feature_engineering_summary.md
   starbucks_clustering_enhancement_summary.md
-  classification/
-    01_modeling_summary.md
-    02_district_trust_summary.md
+  01_modeling_summary.md
+  02_district_trust_summary.md
   archive/
     figures/
     tables/
@@ -104,6 +103,9 @@ scripts/
   04_eda/
   05_clustering/
   06_classification/
+    00_prepare.py
+    01_cafe_level/
+    02_district_level/
 ```
 
 ## 실행 환경
@@ -131,13 +133,16 @@ python scripts/05_clustering/04_pdf_deepening.py
 
 # classification 데이터셋 준비와 모델링
 python scripts/06_classification/00_prepare.py
-python scripts/06_classification/01_pu_baselines.py
-python scripts/06_classification/02_cv_comparison.py
-python scripts/06_classification/03_model_zoo.py
-python scripts/06_classification/06_pu_final.py
-python scripts/06_classification/07_personas.py
-python scripts/06_classification/08_integration.py
-python scripts/06_classification/19_district_final.py
+python scripts/06_classification/01_cafe_level/01_pu_baselines.py
+python scripts/06_classification/01_cafe_level/02_cv_comparison.py
+python scripts/06_classification/01_cafe_level/03_model_zoo.py
+python scripts/06_classification/01_cafe_level/06_pu_final.py
+python scripts/06_classification/01_cafe_level/07_personas.py
+python scripts/06_classification/01_cafe_level/08_integration.py
+python scripts/06_classification/02_district_level/19_district_final.py
+python scripts/06_classification/02_district_level/20_district_persona_bridge.py
+python scripts/06_classification/02_district_level/21_district_feature_importance.py
+python scripts/06_classification/02_district_level/23_district_model_selection.py
 ```
 
 스크립트 실행 결과는 기본적으로 `reports/generated/` 아래에 생성되며 Git에는 포함하지 않습니다. 보고서에 사용한 표, 그림, 로그 스냅샷은 `reports/archive/`에 보존했습니다.
