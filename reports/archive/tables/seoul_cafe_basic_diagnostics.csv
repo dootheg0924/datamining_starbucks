@@ -1,0 +1,4 @@
+﻿dataset,label,rows,starbucks_count,non_starbucks_count,feature_missing_cells,nan_reason_marked_rows,duplicate_latlon_rows,district_count
+all,전체,22305,681,21624,0,726,3594,25
+starbucks,스타벅스,681,681,0,0,40,0,25
+non_starbucks,비스타벅스,21624,0,21624,0,686,3594,25
